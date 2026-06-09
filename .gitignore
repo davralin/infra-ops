@@ -1,0 +1,18 @@
+# Tofu/Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+*.tfstate.*.backup
+terraform.tfvars
+backend.tfvars
+
+# OCI credentials
+*.pem
+
+# Talos generated configs
+talos/*/clusterconfig/
+
+# Sensitive outputs
+kubeconfig
+talosconfig

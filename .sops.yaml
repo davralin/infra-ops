@@ -1,0 +1,17 @@
+creation_rules:
+  # OCI tofu credentials — personal PGP key
+  - path_regex: 'tofu/.*\.sops$'
+    pgp: B4AD172960C32F5FCEE8B6C8D91FA122CA59FD47
+
+  # OCI cluster secrets — Age key
+  - path_regex: 'kubernetes/clusters/oci/.*'
+    age: &oci_age age1luplm36pk0f4j5835tygt6wuqfjqe7ra6u8w0t86xrhhprycgfysjjmgux
+
+  - path_regex: 'kubernetes/core/oci/.*'
+    age: *oci_age
+
+  - path_regex: 'kubernetes/apps/.*/oci/.*'
+    age: *oci_age
+
+  - path_regex: 'talos/oci/.*'
+    age: *oci_age
