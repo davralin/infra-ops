@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: global-settings
+  namespace: flux-system
+data:
+  CLUSTER_NAME: oci
+  TIMEZONE: Europe/Oslo
+  MONITORING_PROMETHEUS: "false"
+  STORAGE_READWRITEONCE: ""
+  STORAGE_READWRITEMANY: ""
