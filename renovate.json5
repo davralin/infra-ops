@@ -1,0 +1,34 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    ":dependencyDashboard",
+    ":semanticCommits",
+    ":separatePatchReleases"
+  ],
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "Renovate Dashboard",
+  "suppressNotifications": ["prIgnoreNotification"],
+  "rebaseWhen": "conflicted",
+  "commitMessageTopic": "{{depName}}",
+  "commitMessageExtra": "to {{newVersion}}",
+  "commitMessageSuffix": "",
+  "packageRules": [
+    {
+      "description": "Auto-merge trusted digests and patches",
+      "matchUpdateTypes": ["digest", "patch"],
+      "automerge": true
+    }
+  ],
+  "customManagers": [
+    {
+      "description": "Talos version in tofu variables",
+      "customType": "regex",
+      "fileMatch": ["tofu/.*\\.tf$", "tofu/.*\\.tfvars$"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-]+) depName=(?<depName>[^\\s]+)\\s+(?:default\\s*=\\s*|[a-z_]+\\s*=\\s*)\"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "{{datasource}}"
+    }
+  ]
+}
