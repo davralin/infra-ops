@@ -70,6 +70,16 @@ data "talos_machine_configuration" "this" {
           ]
           wipe = false
         }
+        kubelet = {
+          extraMounts = [
+            {
+              destination = "/var/local"
+              type        = "bind"
+              source      = "/var/local"
+              options     = ["bind", "rshared", "rw"]
+            }
+          ]
+        }
         time = {
           servers = ["169.254.169.254"]
         }
