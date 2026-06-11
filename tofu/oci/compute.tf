@@ -30,7 +30,6 @@ resource "oci_core_instance" "this" {
     network_type            = "PARAVIRTUALIZED"
     remote_data_volume_type = "PARAVIRTUALIZED"
     boot_volume_type        = "PARAVIRTUALIZED"
-    firmware                = "UEFI_64"
   }
 
   instance_options {

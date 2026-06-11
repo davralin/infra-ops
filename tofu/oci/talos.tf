@@ -3,14 +3,14 @@ resource "talos_machine_secrets" "this" {
 }
 
 data "talos_machine_configuration" "this" {
-  cluster_name     = var.cluster_name
-  cluster_endpoint = "https://${var.wireguard_ip}:6443"
-  machine_type     = "controlplane"
-  machine_secrets  = talos_machine_secrets.this.machine_secrets
-  talos_version    = var.talos_version
+  cluster_name       = var.cluster_name
+  cluster_endpoint   = "https://${var.wireguard_ip}:6443"
+  machine_type       = "controlplane"
+  machine_secrets    = talos_machine_secrets.this.machine_secrets
+  talos_version      = var.talos_version
   kubernetes_version = var.kubernetes_version
-  docs     = false
-  examples = false
+  docs               = false
+  examples           = false
 
   config_patches = [
     yamlencode({
@@ -63,7 +63,7 @@ data "talos_machine_configuration" "this" {
         certSANs = [var.wireguard_ip]
         install = {
           disk  = "/dev/sda"
-          image = "factory.talos.dev/installer/376567988ad370138ad8b2698212367b8edcb69b5fd68c80be1f2ec7d603b4ba:${var.talos_version}"
+          image = "factory.talos.dev/installer/${local.talos_schematic}:${var.talos_version}"
           extraKernelArgs = [
             "console=ttyAMA0",
             "talos.platform=oracle",
