@@ -1,0 +1,35 @@
+---
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: deny-workloads-in-reserved-namespaces
+spec:
+  validationFailureAction: Enforce
+  background: false
+  rules:
+    - name: deny-workloads-in-reserved-namespaces
+      match:
+        any:
+          - resources:
+              namespaces:
+                - default
+                - kube-public
+                - kube-node-lease
+              kinds:
+                - Pod
+                - Service
+                - ReplicationController
+                - Deployment
+                - ReplicaSet
+                - StatefulSet
+                - DaemonSet
+                - Job
+                - CronJob
+              operations:
+                - CREATE
+                - UPDATE
+      validate:
+        message: >-
+          Creating or updating workload resources in this namespace is not allowed.
+          Use an explicit application namespace.
+        deny: {}

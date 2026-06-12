@@ -5,6 +5,8 @@ kind: Kustomization
 resources:
   - ../cilium/ks.yaml
   - ../flux-operator/ks.yaml
+  - ../kyverno/app-ks.yaml
+  - ../kyverno/policies-ks.yaml
   - ../openebs/ks.yaml
   - ../prometheus-operator-crds/ks.yaml
   - ../volsync/ks.yaml
