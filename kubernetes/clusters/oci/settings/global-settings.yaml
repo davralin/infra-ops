@@ -7,6 +7,5 @@ metadata:
 data:
   CLUSTER_NAME: oci
   TIMEZONE: Europe/Oslo
-  MONITORING_PROMETHEUS: "false"
   STORAGE_READWRITEONCE: "openebs-hostpath"
   STORAGE_READWRITEMANY: ""
