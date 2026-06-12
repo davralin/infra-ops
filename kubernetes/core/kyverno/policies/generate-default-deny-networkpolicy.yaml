@@ -16,12 +16,7 @@ spec:
           - resources:
               namespaces:
                 - kube-system
-                - flux-system
-                - cilium
                 - kyverno
-                - default
-                - kube-public
-                - kube-node-lease
       generate:
         generateExisting: true
         apiVersion: networking.k8s.io/v1
