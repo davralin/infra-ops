@@ -1,0 +1,136 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &name healthchecks
+  namespace: flux-system
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: healthchecks
+    namespace: flux-system
+  driftDetection:
+    mode: enabled
+  targetNamespace: healthchecks
+  install:
+    createNamespace: false
+    remediation:
+      retries: 10
+  upgrade:
+    remediation:
+      retries: 10
+  values:
+    fullnameOverride: *name
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    controllers:
+      healthchecks:
+        containers:
+          healthchecks:
+            image:
+              repository: docker.io/healthchecks/healthchecks
+              tag: v4.2@sha256:6b5f593d40994345053f05f86decfa9e17ab1e4422df2ae58abd032a7b14d8f6
+            env:
+              ALLOWED_HOSTS: "health.${SECRET_DEFAULT_DOMAIN}"
+              SITE_ROOT: "https://health.${SECRET_DEFAULT_DOMAIN}"
+              PING_ENDPOINT: "https://health.${SECRET_DEFAULT_DOMAIN}/ping/"
+              SECURE_PROXY_SSL_HEADER: HTTP_X_FORWARDED_PROTO,https
+              DEBUG: "False"
+              DB: sqlite
+              DB_NAME: /data/hc.sqlite
+              PROMETHEUS_ENABLED: "True"
+              REGISTRATION_OPEN: "False"
+              UWSGI_PROCESSES: "2"
+              UWSGI_THREADS: "2"
+              SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: healthchecks-secret
+                    key: SECRET_KEY
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v3/status/
+                    httpHeaders:
+                      - name: Host
+                        value: "health.${SECRET_DEFAULT_DOMAIN}"
+                    port: &port 8000
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 25m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+    service:
+      healthchecks:
+        controller: *name
+        ports:
+          http:
+            port: *port
+    serviceMonitor:
+      healthchecks:
+        serviceName: *name
+        endpoints:
+          - port: http
+    persistence:
+      data:
+        existingClaim: healthchecks
+        globalMounts:
+          - path: /data
+    rawResources:
+      network-policy:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            ingress:
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: cloudflared
+                      app.kubernetes.io/controller: cloudflared
+                toPorts:
+                  - ports:
+                      - port: "8000"
+                        protocol: TCP
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: kube-system
+                      k8s-app: kube-dns
+                toPorts:
+                  - ports:
+                      - port: "53"
+                        protocol: UDP
+                      - port: "53"
+                        protocol: TCP
+                    rules:
+                      dns:
+                        - matchPattern: "*"

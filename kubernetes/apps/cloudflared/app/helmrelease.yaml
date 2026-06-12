@@ -134,3 +134,20 @@ spec:
                   - ports:
                       - port: "443"
                         protocol: TCP
+      healthchecks-egress:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: healthchecks
+                      app.kubernetes.io/controller: healthchecks
+                toPorts:
+                  - ports:
+                      - port: "8000"
+                        protocol: TCP
