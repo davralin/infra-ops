@@ -6,4 +6,5 @@ resources:
   - ./namespace.yaml
   - ./ocirepository.yaml
   - ./helmrelease.yaml
+  - ./networkpolicy.yaml
   - ./prometheusrule.yaml
