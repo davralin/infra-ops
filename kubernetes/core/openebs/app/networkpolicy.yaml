@@ -1,0 +1,22 @@
+---
+# localpv-provisioner calls kube-apiserver for leader election and PV lifecycle
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: localpv-provisioner
+  namespace: openebs
+spec:
+  endpointSelector:
+    matchLabels:
+      app: localpv-provisioner
+      component: localpv-provisioner
+      release: openebs-openebs
+  egress:
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "6443"
+              protocol: TCP
