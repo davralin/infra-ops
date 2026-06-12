@@ -10,7 +10,7 @@ creation_rules:
   - path_regex: 'kubernetes/core/oci/.*'
     age: *oci_age
 
-  - path_regex: 'kubernetes/apps/.*/oci/.*'
+  - path_regex: 'kubernetes/apps/.*'
     age: *oci_age
 
   - path_regex: 'talos/oci/.*'
