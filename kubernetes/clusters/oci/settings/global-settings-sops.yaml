@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Secret
+metadata:
+    name: global-settings
+    namespace: flux-system
+stringData:
+    SECRET_CLOUDFLARED_TUNNEL_TOKEN: ENC[AES256_GCM,data:wlDbbKqlrksGBXy23AfKvzMTUTzn4R6wnLyURgLHmAvxHbHSjzi4zixipzi3gGwVImcD8aCtSS+scqaz2WmPI1q6avMvttvj0z6TPmHqW+UwoICM5PswnFTKzh6hY7OfVPBSuYxXHjb6qZ1psKacD/nYP+YLIVo5qXKSZs0ne1GYPPKI/usK5GRFgUGoPH/AefCchGc7pAN50VvG1Y2Bc5QbCo4vT3MI12IeISPbGUZwrX1Qsq11lg==,iv:9UcS0Sp60InP//+m2fGx1+P6nGY0E31zZObWtQupQhc=,tag:My9mYL6vH4NpWBEvH1uJiw==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBlc1U2cWpSMklySWY5SkFG
+            N1EwS3RIdVk0U2Z6L3JocS81VU0zWkFRNjNnCm5aejFyUkhlVUM2L0tNdUdpcXI5
+            bGVjWVhMdm4zRzl3cEZkN2FCa2NPcVkKLS0tIFNMUys0TVdFS3ArYzF4bkQ3b2U1
+            eVVoZVhDTFJJbDFXUXhQRVYwVy9MTjAKswz09tCmIjW/iBkEhdKAwe7Cd5CFtQrk
+            SSR5o0CuphyDd0IzpCLXFQKDkqmTBoN2LqiQ4JvqjHdn2ivXr2kROQ==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1luplm36pk0f4j5835tygt6wuqfjqe7ra6u8w0t86xrhhprycgfysjjmgux
+    encrypted_regex: ^(data|stringData)$
+    lastmodified: "2026-06-12T12:38:24Z"
+    mac: ENC[AES256_GCM,data:Zfz4osBxBTDcMS38ge4TgHHuKZr5RQpRtWu6TsVCH3++iEba6aibDQqi93rsUWvtXNt5KvPZQbOW5VqOuUiGR1DaZKuc11/6Kp56LHgKCApqo3T4RhwBiJvdGyz+lcRh7z5JZYCQ1+E+d76uLb62+rQwyZbBBdX165mpLycDFOk=,iv:jRQ2LnWvA/U/IXnH/kdxeMxTeR2CqEwOKt84cMq1T0U=,tag:9MZyHlyY8G8yFDImO5V1jw==,type:str]
+    version: 3.13.1
