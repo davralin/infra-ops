@@ -49,6 +49,21 @@ spec:
               DEBUG: "False"
               DB: sqlite
               DB_NAME: /data/hc.sqlite
+              DEFAULT_FROM_EMAIL: "healthchecks@${SECRET_DEFAULT_DOMAIN}"
+              EMAIL_HOST: smtp.fastmail.com
+              EMAIL_PORT: "587"
+              EMAIL_USE_TLS: "True"
+              EMAIL_USE_SSL: "False"
+              EMAIL_HOST_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: healthchecks-secret
+                    key: EMAIL_HOST_USER
+              EMAIL_HOST_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: healthchecks-secret
+                    key: EMAIL_HOST_PASSWORD
               PROMETHEUS_ENABLED: "True"
               REGISTRATION_OPEN: "False"
               UWSGI_PROCESSES: "2"
@@ -134,3 +149,9 @@ spec:
                     rules:
                       dns:
                         - matchPattern: "*"
+              - toFQDNs:
+                  - matchName: smtp.fastmail.com
+                toPorts:
+                  - ports:
+                      - port: "587"
+                        protocol: TCP
