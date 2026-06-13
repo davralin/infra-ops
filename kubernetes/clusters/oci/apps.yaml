@@ -9,8 +9,7 @@ spec:
   dependsOn:
     - name: core
   path: ./kubernetes/apps/oci
-  # Keep disabled for the initial handoff from parent-owned app resources to per-app Kustomizations.
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
