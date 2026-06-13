@@ -19,10 +19,10 @@ metadata:
 spec:
   sourcePVC: healthchecks
   trigger:
-    schedule: "14 01 * * *"
+    schedule: "14 * * * *"
   restic:
     copyMethod: Direct
-    pruneIntervalDays: 7
+    pruneIntervalDays: 1
     repository: healthchecks-volsync-secret
     moverSecurityContext:
       runAsUser: 999
@@ -33,8 +33,9 @@ spec:
       seccompProfile:
         type: RuntimeDefault
     retain:
+      hourly: 24
       daily: 7
-      within: 3d
+      weekly: 1
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
