@@ -7,6 +7,7 @@ resources:
   - ../flux-operator/ks.yaml
   - ../kyverno/app-ks.yaml
   - ../kyverno/policies-ks.yaml
+  - ../metrics-server/ks.yaml
   - ../openebs/ks.yaml
   - ../prometheus-operator-crds/ks.yaml
   - ../volsync/ks.yaml
