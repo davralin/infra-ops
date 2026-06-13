@@ -151,3 +151,20 @@ spec:
                   - ports:
                       - port: "8000"
                         protocol: TCP
+      kuma-egress:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: kuma
+                      app.kubernetes.io/controller: kuma
+                toPorts:
+                  - ports:
+                      - port: "3001"
+                        protocol: TCP
