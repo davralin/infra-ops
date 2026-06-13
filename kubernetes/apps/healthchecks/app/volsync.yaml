@@ -1,0 +1,67 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: healthchecks-volsync-secret
+  namespace: healthchecks
+type: Opaque
+stringData:
+  RESTIC_REPOSITORY: "s3:https://${SECRET_S3_VOLSYNC_HOST}/${SECRET_S3_VOLSYNC_BUCKET}/volsync-${CLUSTER_NAME}/healthchecks"
+  RESTIC_PASSWORD: "${SECRET_VOLSYNC_RESTIC_PWD}"
+  AWS_ACCESS_KEY_ID: "${SECRET_S3_VOLSYNC_ACCESS_KEYS}"
+  AWS_SECRET_ACCESS_KEY: "${SECRET_S3_VOLSYNC_SECRET_KEYS}"
+---
+apiVersion: volsync.backube/v1alpha1
+kind: ReplicationSource
+metadata:
+  name: healthchecks-restic
+  namespace: healthchecks
+spec:
+  sourcePVC: healthchecks
+  trigger:
+    schedule: "14 01 * * *"
+  restic:
+    copyMethod: Direct
+    pruneIntervalDays: 7
+    repository: healthchecks-volsync-secret
+    moverSecurityContext:
+      runAsUser: 999
+      runAsGroup: 999
+      fsGroup: 999
+      fsGroupChangePolicy: OnRootMismatch
+      runAsNonRoot: true
+      seccompProfile:
+        type: RuntimeDefault
+    retain:
+      daily: 7
+      within: 3d
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: healthchecks-volsync
+  namespace: healthchecks
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/created-by: volsync
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: ${SECRET_S3_VOLSYNC_HOST}
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
