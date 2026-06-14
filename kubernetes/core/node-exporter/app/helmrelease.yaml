@@ -1,0 +1,36 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: node-exporter
+  namespace: flux-system
+spec:
+  interval: 30m
+  driftDetection:
+    mode: enabled
+  chartRef:
+    kind: OCIRepository
+    name: node-exporter
+    namespace: flux-system
+  targetNamespace: node-exporter
+  install:
+    createNamespace: false
+    remediation:
+      retries: 10
+  upgrade:
+    remediation:
+      retries: 10
+  values:
+    fullnameOverride: node-exporter
+    prometheus:
+      monitor:
+        enabled: true
+        relabelings:
+          - action: replace
+            targetLabel: job
+            replacement: node-exporter
+          - action: replace
+            regex: (.*)
+            replacement: $1
+            sourceLabels: ["__meta_kubernetes_pod_node_name"]
+            targetLabel: kubernetes_node

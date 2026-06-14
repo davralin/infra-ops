@@ -8,6 +8,7 @@ resources:
   - ../kyverno/app-ks.yaml
   - ../kyverno/policies-ks.yaml
   - ../metrics-server/ks.yaml
+  - ../node-exporter/ks.yaml
   - ../openebs/ks.yaml
   - ../prometheus-operator-crds/ks.yaml
   - ../volsync/ks.yaml
