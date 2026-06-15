@@ -117,6 +117,16 @@ spec:
         existingClaim: healthchecks
         globalMounts:
           - path: /data
+      local-settings:
+        enabled: true
+        type: configMap
+        name: healthchecks-local-settings
+        advancedMounts:
+          healthchecks:
+            healthchecks:
+              - path: /opt/healthchecks/hc/local_settings.py
+                subPath: local_settings.py
+                readOnly: true
     rawResources:
       network-policy:
         manifest:
