@@ -38,6 +38,18 @@ spec:
       serviceMonitor:
         enabled: true
     cleanupController:
+      rbac:
+        clusterRole:
+          extraResources:
+            - apiGroups:
+                - ""
+              resources:
+                - pods
+              verbs:
+                - get
+                - list
+                - watch
+                - delete
       serviceMonitor:
         enabled: true
     reportsController:

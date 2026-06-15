@@ -1,0 +1,25 @@
+---
+apiVersion: policies.kyverno.io/v1
+kind: DeletingPolicy
+metadata:
+  name: delete-terminal-pods
+spec:
+  schedule: "17 * * * *"
+  matchConstraints:
+    matchPolicy: Equivalent
+    resourceRules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - "*"
+        resources:
+          - pods
+        scope: Namespaced
+  conditions:
+    - name: is-terminal
+      expression: "object.status.phase in ['Succeeded', 'Failed']"
+    - name: is-old
+      expression: 'time.now() - timestamp(object.metadata.creationTimestamp) > duration("24h")'
+  deletionPropagationPolicy: Background
