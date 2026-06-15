@@ -27,9 +27,22 @@ spec:
     remediation:
       retries: 5
   values:
+    cgroup:
+      autoMount:
+        enabled: false
+      hostRoot: /sys/fs/cgroup
+    gatewayAPI:
+      enabled: true
+    hostFirewall:
+      enabled: true
     ipam:
       mode: kubernetes
+    k8sServiceHost: localhost
+    k8sServicePort: 7445
     kubeProxyReplacement: true
+    operator:
+      replicas: 1
+    rollOutCiliumPods: true
     securityContext:
       capabilities:
         ciliumAgent:
@@ -48,13 +61,3 @@ spec:
           - NET_ADMIN
           - SYS_ADMIN
           - SYS_RESOURCE
-    cgroup:
-      autoMount:
-        enabled: false
-      hostRoot: /sys/fs/cgroup
-    k8sServiceHost: localhost
-    k8sServicePort: 7445
-    operator:
-      replicas: 1
-    gatewayAPI:
-      enabled: true
