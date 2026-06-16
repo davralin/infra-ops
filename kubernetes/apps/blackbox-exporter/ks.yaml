@@ -2,20 +2,16 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: healthchecks
+  name: blackbox-exporter
   namespace: flux-system
 spec:
   interval: 30m
-  path: ./kubernetes/apps/healthchecks/app
+  path: ./kubernetes/apps/blackbox-exporter/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
   postBuild:
     substituteFrom:
       - name: global-settings
@@ -25,9 +21,6 @@ spec:
         kind: Secret
         optional: true
   dependsOn:
-    - name: blackbox-exporter
     - name: cilium
-    - name: cloudflared
-    - name: openebs
     - name: prometheus-operator-crds
-    - name: volsync
+  wait: true

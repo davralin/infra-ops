@@ -25,6 +25,7 @@ spec:
         kind: Secret
         optional: true
   dependsOn:
+    - name: blackbox-exporter
     - name: cilium
     - name: cloudflared
     - name: openebs

@@ -1,0 +1,75 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: blackbox-exporter
+  namespace: flux-system
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: blackbox-exporter
+    namespace: flux-system
+  driftDetection:
+    mode: enabled
+  targetNamespace: blackbox-exporter
+  install:
+    createNamespace: false
+    remediation:
+      retries: 10
+  upgrade:
+    remediation:
+      retries: 10
+  values:
+    fullnameOverride: blackbox-exporter
+    config:
+      modules:
+        http_2xx:
+          prober: http
+          timeout: 5s
+          http:
+            valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+            follow_redirects: true
+            preferred_ip_protocol: ip4
+    networkPolicy:
+      enabled: false
+    prometheusRule:
+      enabled: true
+      rules:
+        - alert: BlackboxProbeFailed
+          expr: probe_success == 0
+          for: 30m
+          labels:
+            severity: critical
+          annotations:
+            summary: The host {{ $labels.instance }} is currently unreachable.
+        - alert: BlackboxSslCertificateWillExpireSoon
+          expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 7
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: SSL certificate for {{ $labels.instance }} expires in less than 7 days.
+        - alert: BlackboxSslCertificateWillExpireReallySoon
+          expr: probe_ssl_earliest_cert_expiry - time() < 86400 * 3
+          for: 30m
+          labels:
+            severity: critical
+          annotations:
+            summary: SSL certificate for {{ $labels.instance }} expires in less than 3 days.
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsGroup: 65534
+      runAsNonRoot: true
+      runAsUser: 65534
+      seccompProfile:
+        type: RuntimeDefault
+    serviceMonitor:
+      selfMonitor:
+        enabled: true
+        interval: 1m
+        scrapeTimeout: 10s
