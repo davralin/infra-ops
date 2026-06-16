@@ -6,3 +6,4 @@ resources:
   - ./delete-terminal-pods.yaml
   - ./deny-workloads-in-reserved-namespaces.yaml
   - ./generate-default-deny-networkpolicy.yaml
+  - ./verify-images-sigstore-audit.yaml
