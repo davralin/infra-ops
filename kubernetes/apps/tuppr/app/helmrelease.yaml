@@ -1,0 +1,35 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &name tuppr
+  namespace: flux-system
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: tuppr
+  driftDetection:
+    mode: enabled
+  targetNamespace: talos-system
+  install:
+    createNamespace: true
+    crds: CreateReplace
+    remediation:
+      retries: 10
+  upgrade:
+    remediation:
+      retries: 10
+    crds: CreateReplace
+  values:
+    fullnameOverride: *name
+    monitoring:
+      dashboards:
+        enabled: true
+      prometheusRule:
+        enabled: true
+      serviceMonitor:
+        enabled: true
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
