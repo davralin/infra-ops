@@ -20,3 +20,11 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 5
+  values:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 384Mi
+      requests:
+        cpu: 25m
+        memory: 128Mi
