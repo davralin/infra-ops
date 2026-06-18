@@ -7,6 +7,8 @@ metadata:
 spec:
   releaseName: flux-operator
   interval: 1h
+  driftDetection:
+    mode: enabled
   targetNamespace: flux-system
   chartRef:
     kind: OCIRepository
