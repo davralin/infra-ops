@@ -62,12 +62,12 @@ variable "instance_shape" {
 
 variable "instance_ocpus" {
   type    = number
-  default = 4
+  default = 2
 }
 
 variable "instance_memory_in_gbs" {
   type    = number
-  default = 24
+  default = 12
 }
 
 variable "boot_volume_size_in_gbs" {
