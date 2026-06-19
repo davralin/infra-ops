@@ -33,8 +33,8 @@ spec:
     # Allow monitoring scrapes
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: victoriametrics
-            app.kubernetes.io/component: monitoring
+            k8s:io.kubernetes.pod.namespace: victoriametrics
+            k8s:app.kubernetes.io/component: monitoring
       toPorts:
         - ports:
             - port: "8000"
@@ -65,8 +65,8 @@ spec:
     # Allow monitoring scrapes
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: victoriametrics
-            app.kubernetes.io/component: monitoring
+            k8s:io.kubernetes.pod.namespace: victoriametrics
+            k8s:app.kubernetes.io/component: monitoring
       toPorts:
         - ports:
             - port: "8000"
@@ -104,8 +104,8 @@ spec:
     # Allow monitoring scrapes
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: victoriametrics
-            app.kubernetes.io/component: monitoring
+            k8s:io.kubernetes.pod.namespace: victoriametrics
+            k8s:app.kubernetes.io/component: monitoring
       toPorts:
         - ports:
             - port: "8000"
@@ -136,8 +136,8 @@ spec:
     # Allow monitoring scrapes
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: victoriametrics
-            app.kubernetes.io/component: monitoring
+            k8s:io.kubernetes.pod.namespace: victoriametrics
+            k8s:app.kubernetes.io/component: monitoring
       toPorts:
         - ports:
             - port: "8000"
