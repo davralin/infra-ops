@@ -9,7 +9,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: vmagent
   egress:
-    # Allow DNS
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
@@ -21,14 +20,12 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # Allow kube-apiserver
     - toEntities:
         - kube-apiserver
       toPorts:
         - ports:
             - port: "6443"
               protocol: TCP
-    # Allow scraping all pods in all namespaces
     - toEndpoints:
         - {}
       toPorts:
@@ -61,7 +58,6 @@ spec:
               protocol: TCP
             - port: "10259"
               protocol: TCP
-    # Allow remote-write to vmsingle
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: victoriametrics
@@ -81,7 +77,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: vmsingle
   ingress:
-    # Allow vmagent writes
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: victoriametrics
@@ -90,7 +85,6 @@ spec:
         - ports:
             - port: "8428"
               protocol: TCP
-    # Allow vmalert queries
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: victoriametrics
@@ -110,7 +104,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: vmalert
   egress:
-    # Allow DNS
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
@@ -122,14 +115,12 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # Allow kube-apiserver
     - toEntities:
         - kube-apiserver
       toPorts:
         - ports:
             - port: "6443"
               protocol: TCP
-    # Allow queries to vmsingle
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: victoriametrics
@@ -138,7 +129,6 @@ spec:
         - ports:
             - port: "8429"
               protocol: TCP
-    # Allow alertmanager notifications
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: victoriametrics
@@ -158,7 +148,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: vmalertmanager
   egress:
-    # Allow DNS
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
@@ -170,14 +159,12 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # Allow kube-apiserver
     - toEntities:
         - kube-apiserver
       toPorts:
         - ports:
             - port: "6443"
               protocol: TCP
-    # Will add SMTP/webhook egress later when configured
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
@@ -189,7 +176,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: victoria-metrics-operator
   egress:
-    # Allow DNS
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
@@ -201,7 +187,6 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # Allow kube-apiserver
     - toEntities:
         - kube-apiserver
       toPorts:
@@ -219,7 +204,6 @@ spec:
     matchLabels:
       app.kubernetes.io/name: kube-state-metrics
   egress:
-    # Allow DNS
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: kube-system
@@ -231,10 +215,11 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    # Allow kube-apiserver
     - toEntities:
         - kube-apiserver
       toPorts:
         - ports:
+            - port: "443"
+              protocol: TCP
             - port: "6443"
               protocol: TCP
