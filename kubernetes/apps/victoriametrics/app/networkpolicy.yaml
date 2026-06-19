@@ -86,7 +86,7 @@ spec:
             app.kubernetes.io/name: vmagent
       toPorts:
         - ports:
-            - port: "8429"
+            - port: "8428"
               protocol: TCP
     # Allow vmalert queries
     - fromEndpoints:
@@ -95,7 +95,7 @@ spec:
             app.kubernetes.io/name: vmalert
       toPorts:
         - ports:
-            - port: "8429"
+            - port: "8428"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
