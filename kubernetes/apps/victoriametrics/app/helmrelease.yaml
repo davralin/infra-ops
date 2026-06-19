@@ -59,20 +59,6 @@ spec:
             memory: 2Gi
         extraArgs:
           memory.allowedPercent: "80"
-        podSecurityContext:
-          runAsNonRoot: true
-          runAsUser: 65534
-          fsGroup: 65534
-          seccompProfile:
-            type: RuntimeDefault
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 65534
-          capabilities:
-            drop:
-              - ALL
 
     vmagent:
       enabled: true
@@ -89,28 +75,12 @@ spec:
             memory: 512Mi
         extraArgs:
           promscrape.maxScrapeSize: "16777216"
-        podSecurityContext:
-          runAsNonRoot: true
-          runAsUser: 65534
-          fsGroup: 65534
-          seccompProfile:
-            type: RuntimeDefault
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 65534
-          capabilities:
-            drop:
-              - ALL
         # Service discovery configs
         staticScrapeSelector: {}
         podScrapeSelector: {}
         podScrapeNamespaceSelector: {}
         serviceScrapeSelector: {}
         serviceScrapeNamespaceSelector: {}
-        probeScrapeSelector: {}
-        probeScrapeNamespaceSelector: {}
         nodeScrapeSelector: {}
         nodeScrapeNamespaceSelector: {}
 
@@ -125,20 +95,6 @@ spec:
             memory: 64Mi
           limits:
             memory: 256Mi
-        podSecurityContext:
-          runAsNonRoot: true
-          runAsUser: 65534
-          fsGroup: 65534
-          seccompProfile:
-            type: RuntimeDefault
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 65534
-          capabilities:
-            drop:
-              - ALL
 
     alertmanager:
       enabled: true
@@ -151,20 +107,6 @@ spec:
             memory: 64Mi
           limits:
             memory: 256Mi
-        podSecurityContext:
-          runAsNonRoot: true
-          runAsUser: 65534
-          fsGroup: 65534
-          seccompProfile:
-            type: RuntimeDefault
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
-          runAsNonRoot: true
-          runAsUser: 65534
-          capabilities:
-            drop:
-              - ALL
         storage:
           volumeClaimTemplate:
             spec:
