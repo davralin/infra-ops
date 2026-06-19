@@ -1,0 +1,14 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: forgejo
+  namespace: forgejo
+spec:
+  module: http_2xx
+  prober:
+    url: blackbox-exporter.blackbox-exporter.svc.cluster.local:9115
+  targets:
+    staticConfig:
+      static:
+        - "https://git.${SECRET_DEFAULT_DOMAIN}"
