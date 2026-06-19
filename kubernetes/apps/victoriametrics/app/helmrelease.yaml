@@ -1,0 +1,206 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: victoria-metrics-k8s-stack
+  namespace: flux-system
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: victoria-metrics-k8s-stack
+    namespace: flux-system
+  targetNamespace: victoriametrics
+  interval: 10m
+  timeout: 10m
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    victoria-metrics-operator:
+      enabled: true
+      operator:
+        disable_prometheus_converter: false
+        enable_converter_ownership: true
+      podSecurityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+        fsGroup: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 65534
+        capabilities:
+          drop:
+            - ALL
+
+    vmsingle:
+      enabled: true
+      spec:
+        retentionPeriod: "14d"
+        replicaCount: 1
+        storage:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 20Gi
+          storageClassName: ${STORAGE_READWRITEONCE}
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+          limits:
+            memory: 2Gi
+        extraArgs:
+          memory.allowedPercent: "80"
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          fsGroup: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 65534
+          capabilities:
+            drop:
+              - ALL
+
+    vmagent:
+      enabled: true
+      spec:
+        replicaCount: 1
+        scrapeInterval: 60s
+        externalLabels:
+          cluster: oci
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            memory: 512Mi
+        extraArgs:
+          promscrape.maxScrapeSize: "16777216"
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          fsGroup: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 65534
+          capabilities:
+            drop:
+              - ALL
+        # Service discovery configs
+        staticScrapeSelector: {}
+        podScrapeSelector: {}
+        podScrapeNamespaceSelector: {}
+        serviceScrapeSelector: {}
+        serviceScrapeNamespaceSelector: {}
+        probeScrapeSelector: {}
+        probeScrapeNamespaceSelector: {}
+        nodeScrapeSelector: {}
+        nodeScrapeNamespaceSelector: {}
+
+    vmalert:
+      enabled: true
+      spec:
+        replicaCount: 1
+        evaluationInterval: 60s
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          fsGroup: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 65534
+          capabilities:
+            drop:
+              - ALL
+
+    alertmanager:
+      enabled: true
+      spec:
+        replicaCount: 1
+        retention: 120h
+        resources:
+          requests:
+            cpu: 25m
+            memory: 64Mi
+          limits:
+            memory: 256Mi
+        podSecurityContext:
+          runAsNonRoot: true
+          runAsUser: 65534
+          fsGroup: 65534
+          seccompProfile:
+            type: RuntimeDefault
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 65534
+          capabilities:
+            drop:
+              - ALL
+        storage:
+          volumeClaimTemplate:
+            spec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 1Gi
+              storageClassName: ${STORAGE_READWRITEONCE}
+
+    # Disable subcharts (we already have node-exporter, don't need grafana/ksm on OCI)
+    grafana:
+      enabled: false
+    prometheus-node-exporter:
+      enabled: false
+    kube-state-metrics:
+      enabled: false
+
+    # Disable built-in scrape configs (rely on operator auto-conversion of ServiceMonitors)
+    defaultRules:
+      create: false
+    defaultDashboardsEnabled: false
+    experimentalDashboardsEnabled: false
+
+    # Disable built-in VMServiceScrapes/VMNodeScrapes (avoid duplicates)
+    kubelet:
+      enabled: false
+    kubeApiServer:
+      enabled: false
+    kubeControllerManager:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeProxy:
+      enabled: false
+    kubeEtcd:
+      enabled: false
+    coreDns:
+      enabled: false

@@ -1,0 +1,200 @@
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vmagent-scrape-egress
+  namespace: victoriametrics
+spec:
+  endpointSelector:
+    matchLabels:
+      app.vm.victoriametrics.com: vmagent
+  egress:
+    # Allow DNS
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+          rules:
+            dns:
+              - matchPattern: "*"
+    # Allow kube-apiserver
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
+    # Allow scraping all pods in all namespaces
+    - toEndpoints:
+        - {}
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+            - port: "9090"
+              protocol: TCP
+            - port: "9100"
+              protocol: TCP
+            - port: "9115"
+              protocol: TCP
+            - port: "9153"
+              protocol: TCP
+            - port: "9443"
+              protocol: TCP
+            - port: "10250"
+              protocol: TCP
+            - port: "10257"
+              protocol: TCP
+            - port: "10259"
+              protocol: TCP
+    # Allow remote-write to vmsingle
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: victoriametrics
+            app.kubernetes.io/name: vmsingle
+      toPorts:
+        - ports:
+            - port: "8429"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vmsingle-ingress
+  namespace: victoriametrics
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: vmsingle
+  ingress:
+    # Allow vmagent writes
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: victoriametrics
+            app.vm.victoriametrics.com: vmagent
+      toPorts:
+        - ports:
+            - port: "8429"
+              protocol: TCP
+    # Allow vmalert queries
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: victoriametrics
+            app.vm.victoriametrics.com: vmalert
+      toPorts:
+        - ports:
+            - port: "8429"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vmalert-egress
+  namespace: victoriametrics
+spec:
+  endpointSelector:
+    matchLabels:
+      app.vm.victoriametrics.com: vmalert
+  egress:
+    # Allow DNS
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+          rules:
+            dns:
+              - matchPattern: "*"
+    # Allow kube-apiserver
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
+    # Allow queries to vmsingle
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: victoriametrics
+            app.kubernetes.io/name: vmsingle
+      toPorts:
+        - ports:
+            - port: "8429"
+              protocol: TCP
+    # Allow alertmanager notifications
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: victoriametrics
+            app.vm.victoriametrics.com: vmalertmanager
+      toPorts:
+        - ports:
+            - port: "9093"
+              protocol: TCP
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vmalertmanager-egress
+  namespace: victoriametrics
+spec:
+  endpointSelector:
+    matchLabels:
+      app.vm.victoriametrics.com: vmalertmanager
+  egress:
+    # Allow DNS
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+          rules:
+            dns:
+              - matchPattern: "*"
+    # Allow kube-apiserver
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
+    # Will add SMTP/webhook egress later when configured
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: vm-operator-egress
+  namespace: victoriametrics
+spec:
+  endpointSelector:
+    matchLabels:
+      app.kubernetes.io/name: victoria-metrics-operator
+  egress:
+    # Allow DNS
+    - toEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+          rules:
+            dns:
+              - matchPattern: "*"
+    # Allow kube-apiserver
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "6443"
+              protocol: TCP
