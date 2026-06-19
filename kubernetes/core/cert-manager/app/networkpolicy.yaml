@@ -22,11 +22,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: prometheus
-            k8s:io.kubernetes.pod.namespace: monitoring
-        - matchLabels:
             app.kubernetes.io/name: vmagent
-            k8s:io.kubernetes.pod.namespace: victoriametrics
+            io.kubernetes.pod.namespace: victoriametrics
             managed-by: vm-operator
       toPorts:
         - ports:
@@ -77,11 +74,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: prometheus
-            k8s:io.kubernetes.pod.namespace: monitoring
-        - matchLabels:
             app.kubernetes.io/name: vmagent
-            k8s:io.kubernetes.pod.namespace: victoriametrics
+            io.kubernetes.pod.namespace: victoriametrics
             managed-by: vm-operator
       toPorts:
         - ports:
@@ -119,11 +113,8 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            app.kubernetes.io/name: prometheus
-            k8s:io.kubernetes.pod.namespace: monitoring
-        - matchLabels:
             app.kubernetes.io/name: vmagent
-            k8s:io.kubernetes.pod.namespace: victoriametrics
+            io.kubernetes.pod.namespace: victoriametrics
             managed-by: vm-operator
       toPorts:
         - ports:

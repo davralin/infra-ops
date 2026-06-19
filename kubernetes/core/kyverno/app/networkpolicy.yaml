@@ -30,6 +30,15 @@ spec:
         - ports:
             - port: "9443"
               protocol: TCP
+    # Allow monitoring scrapes
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: victoriametrics
+            app.kubernetes.io/component: monitoring
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
   egress:
     - toEntities:
         - kube-apiserver
@@ -52,6 +61,16 @@ spec:
       app.kubernetes.io/part-of: kyverno
       app.kubernetes.io/instance: kyverno
       app.kubernetes.io/component: background-controller
+  ingress:
+    # Allow monitoring scrapes
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: victoriametrics
+            app.kubernetes.io/component: monitoring
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
   egress:
     - toEntities:
         - kube-apiserver
@@ -82,6 +101,15 @@ spec:
         - ports:
             - port: "9443"
               protocol: TCP
+    # Allow monitoring scrapes
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: victoriametrics
+            app.kubernetes.io/component: monitoring
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
   egress:
     - toEntities:
         - kube-apiserver
@@ -104,6 +132,16 @@ spec:
       app.kubernetes.io/part-of: kyverno
       app.kubernetes.io/instance: kyverno
       app.kubernetes.io/component: reports-controller
+  ingress:
+    # Allow monitoring scrapes
+    - fromEndpoints:
+        - matchLabels:
+            io.kubernetes.pod.namespace: victoriametrics
+            app.kubernetes.io/component: monitoring
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
   egress:
     - toEntities:
         - kube-apiserver
