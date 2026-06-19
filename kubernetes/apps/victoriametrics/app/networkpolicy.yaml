@@ -7,7 +7,7 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.vm.victoriametrics.com: vmagent
+      app.kubernetes.io/name: vmagent
   egress:
     # Allow DNS
     - toEndpoints:
@@ -75,7 +75,7 @@ spec:
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: victoriametrics
-            app.vm.victoriametrics.com: vmagent
+            app.kubernetes.io/name: vmagent
       toPorts:
         - ports:
             - port: "8429"
@@ -84,7 +84,7 @@ spec:
     - fromEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: victoriametrics
-            app.vm.victoriametrics.com: vmalert
+            app.kubernetes.io/name: vmalert
       toPorts:
         - ports:
             - port: "8429"
@@ -98,7 +98,7 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.vm.victoriametrics.com: vmalert
+      app.kubernetes.io/name: vmalert
   egress:
     # Allow DNS
     - toEndpoints:
@@ -132,7 +132,7 @@ spec:
     - toEndpoints:
         - matchLabels:
             io.kubernetes.pod.namespace: victoriametrics
-            app.vm.victoriametrics.com: vmalertmanager
+            app.kubernetes.io/name: vmalertmanager
       toPorts:
         - ports:
             - port: "9093"
@@ -146,7 +146,7 @@ metadata:
 spec:
   endpointSelector:
     matchLabels:
-      app.vm.victoriametrics.com: vmalertmanager
+      app.kubernetes.io/name: vmalertmanager
   egress:
     # Allow DNS
     - toEndpoints:
