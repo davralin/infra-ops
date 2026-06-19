@@ -33,9 +33,17 @@ spec:
         - {}
       toPorts:
         - ports:
+            - port: "3000"
+              protocol: TCP
+            - port: "8000"
+              protocol: TCP
             - port: "8080"
               protocol: TCP
+            - port: "8443"
+              protocol: TCP
             - port: "9090"
+              protocol: TCP
+            - port: "9093"
               protocol: TCP
             - port: "9100"
               protocol: TCP
@@ -58,7 +66,7 @@ spec:
             app.kubernetes.io/name: vmsingle
       toPorts:
         - ports:
-            - port: "8429"
+            - port: "8428"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
