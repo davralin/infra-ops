@@ -12,7 +12,7 @@ spec:
     namespace: flux-system
   targetNamespace: victoriametrics
   interval: 10m
-  timeout: 10m
+  timeout: 15m
   install:
     remediation:
       retries: 3
