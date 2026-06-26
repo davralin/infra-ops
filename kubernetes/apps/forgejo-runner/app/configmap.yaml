@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forgejo-runner-config
+  namespace: forgejo-runner
+data:
+  config.yaml: |
+    log:
+      level: info
+    runner:
+      capacity: 1
+      timeout: 3h
+      labels:
+        - docker:docker://docker.io/library/node:20-bookworm
+        - ubuntu-latest:docker://ghcr.io/catthehacker/ubuntu:act-22.04
+        - self-hosted:host
+    cache:
+      enabled: true
+    container:
+      network: ""
+      privileged: false
+      options: -v /certs/client:/certs/client
+      valid_volumes:
+        - /certs/client
+      docker_host: "-"
+    host:
+      workdir_parent: ""
