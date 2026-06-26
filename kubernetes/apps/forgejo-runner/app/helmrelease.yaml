@@ -1,62 +1,78 @@
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: forgejo-runner
-  namespace: flux-system
-spec:
-  interval: 30m
-  chartRef:
-    kind: OCIRepository
     name: forgejo-runner
     namespace: flux-system
-  targetNamespace: forgejo-runner
-  install:
-    createNamespace: false
-    remediation:
-      retries: 3
-  upgrade:
-    remediation:
-      retries: 3
-  driftDetection:
-    mode: enabled
-  values:
-    knownLastVersion: true
-
-    runner:
-      config:
-        create: false
-        existingSecret: forgejo-runner-config
-        file:
-          log:
-            level: info
-          runner:
-            capacity: 1
-            timeout: 3h
-            labels:
-              - docker
-              - ubuntu-latest
-              - self-hosted
-            envs: {}
-          container:
-            docker_host: "-"
-            privileged: false
-            options: ""
-
-    securityContext:
-      privileged: true
-
-    dind:
-      resources:
-        requests:
-          cpu: 50m
-          memory: 1Gi
-        limits:
-          memory: 2Gi
-
-    resources:
-      requests:
-        cpu: 50m
-        memory: 128Mi
-      limits:
-        memory: 256Mi
+spec:
+    interval: 30m
+    chartRef:
+        kind: OCIRepository
+        name: forgejo-runner
+        namespace: flux-system
+    targetNamespace: forgejo-runner
+    install:
+        createNamespace: false
+        remediation:
+            retries: 3
+    upgrade:
+        remediation:
+            retries: 3
+    driftDetection:
+        mode: enabled
+    values:
+        knownLastVersion: true
+        runner:
+            config:
+                create: false
+                file:
+                    log:
+                        level: info
+                    runner:
+                        capacity: 1
+                        timeout: 3h
+                        labels:
+                            - docker
+                            - ubuntu-latest
+                            - self-hosted
+                        envs:
+                            A_TEST_ENV_NAME_1: ""
+                            A_TEST_ENV_NAME_2: ""
+                    container:
+                        docker_host: '-'
+                        privileged: false
+                    server:
+                        connections:
+                            forgejo:
+                                url: http://forgejo-http.forgejo.svc.cluster.local:3000
+                                uuid: ENC[AES256_GCM,data:IbhhXvu7bF/DsgCr0qPbND1tID6ib32o4h8S2S4hgt6m9WKH,iv:MimeiZyT2viPD16hEH1XzctYIBsO0ucGNo6k6+vI9jA=,tag:GQnEKAG/VsUJMSpBPZjwuA==,type:str]
+                                token: ENC[AES256_GCM,data:KKdl5Mz+9SXMwlObUiTiLKzlJl4Ny/4LVCMUwKmPlHn3OcpyS/ixhQ==,iv:yp8Zr2+5w+c3Dv15D/vxuCyuJTgm6AHXALCFIfJ+zo8=,tag:6Vaw71B58IXeU8Xs27uZmQ==,type:str]
+        securityContext:
+            privileged: true
+        dind:
+            resources:
+                requests:
+                    cpu: 50m
+                    memory: 1Gi
+                limits:
+                    memory: 2Gi
+        resources:
+            requests:
+                cpu: 50m
+                memory: 128Mi
+            limits:
+                memory: 256Mi
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSB6b2JtRDM5VHFocjdCaFM4
+            R2ZoYUNselJOQ3Y2Q01tZE82WXV1QUFIWTMwCklqZk9LWUY3VlRiREVIMTVFZjls
+            QVlrVW50WStrWVZxOHd4Z3YxakxJTzAKLS0tIDl6c3Yyei9NV3FRVmdsMEhGR1ZH
+            RWFjOGlvZ0cycURhcWJ5eStVZmpWTTQKJ19JY+u1ef4G7FquXmRt+Bz+vmUI3In/
+            +o55dDRBzHKd8FFvLViRMa/2WLegZ5Bt1/MplMAXiY5xicR1Mkq8Aw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1luplm36pk0f4j5835tygt6wuqfjqe7ra6u8w0t86xrhhprycgfysjjmgux
+    encrypted_regex: ^(token|uuid)$
+    lastmodified: "2026-06-26T11:13:57Z"
+    mac: ENC[AES256_GCM,data:iyAfUS1lCDn45Q3gwfsyLOmCtjfKeenkRDDBW2B6yXvA0KlMxy6XHU2riT+GVBMWatjuh2AdmiuR8DWRPwoCZTt6rAc8wJG9gmY/RJoUaj+6AeT3W2Tts57wzpdoSqgtnpljTKVJhASri15LS+lBy1YN40CwIPjsAy59nPvZuK0=,iv:ciACNeCXsD8Lw9z3u2dT9dw3Di7G8cWVI3+YVbEGBCo=,tag:vrDjhshZx2RtT8D2ut55mg==,type:str]
+    version: 3.13.1
