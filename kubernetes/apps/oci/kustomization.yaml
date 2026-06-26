@@ -6,6 +6,7 @@ resources:
   - ../blackbox-exporter
   - ../cloudflared
   - ../forgejo
+  - ../forgejo-runner
   - ../healthchecks
   - ../kuma
   - ../tuppr
