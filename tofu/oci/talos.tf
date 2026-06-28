@@ -52,8 +52,8 @@ data "talos_machine_configuration" "this" {
         }
         network = {
           cni            = { name = "none" }
-          podSubnets     = ["172.20.0.0/16"]
-          serviceSubnets = ["172.21.0.0/16"]
+          podSubnets     = ["172.20.0.0/16", "fd00::/48"]
+          serviceSubnets = ["172.21.0.0/16", "fd01::/108"]
         }
       }
     }),
@@ -119,10 +119,10 @@ data "talos_machine_configuration" "this" {
         }
         network = {
           interfaces = [
-            {
-              interface = "eth0"
-              dhcp      = true
-            }
+              {
+               interface = "eth0"
+               dhcp      = true
+              }
           ]
         }
       }

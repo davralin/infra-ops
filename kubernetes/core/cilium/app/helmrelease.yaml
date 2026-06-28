@@ -37,6 +37,8 @@ spec:
       enabled: true
     hostFirewall:
       enabled: true
+    ipv6:
+      enabled: true
     ipam:
       mode: kubernetes
     k8sServiceHost: localhost
@@ -45,6 +47,11 @@ spec:
     operator:
       replicas: 1
     rollOutCiliumPods: true
+    updateStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxSurge: 0
+        maxUnavailable: 1
     securityContext:
       capabilities:
         ciliumAgent:

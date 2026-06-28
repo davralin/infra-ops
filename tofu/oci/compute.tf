@@ -53,3 +53,12 @@ resource "oci_core_instance" "this" {
     ignore_changes = [metadata]
   }
 }
+
+data "oci_core_vnic_attachments" "this" {
+  compartment_id = var.compartment_ocid
+  instance_id    = oci_core_instance.this.id
+}
+
+resource "oci_core_ipv6" "this" {
+  vnic_id = data.oci_core_vnic_attachments.this.vnic_attachments[0].vnic_id
+}

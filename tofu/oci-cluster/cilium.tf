@@ -14,6 +14,9 @@ resource "helm_release" "cilium" {
   timeout          = 300
 
   values = [yamlencode({
+    ipv6 = {
+      enabled = true
+    }
     ipam = {
       mode = "kubernetes"
     }
@@ -37,6 +40,13 @@ resource "helm_release" "cilium" {
     }
     gatewayAPI = {
       enabled = true
+    }
+    updateStrategy = {
+      type = "RollingUpdate"
+      rollingUpdate = {
+        maxSurge = 0
+        maxUnavailable = 1
+      }
     }
   })]
 }

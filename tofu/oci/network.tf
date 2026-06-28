@@ -3,6 +3,8 @@ resource "oci_core_vcn" "this" {
   cidr_blocks    = ["172.16.0.0/16"]
   display_name   = "${var.cluster_name}-vcn"
   freeform_tags  = local.common_tags
+
+  is_ipv6enabled = true
 }
 
 resource "oci_core_internet_gateway" "this" {
@@ -24,6 +26,11 @@ resource "oci_core_route_table" "this" {
     destination_type  = "CIDR_BLOCK"
     network_entity_id = oci_core_internet_gateway.this.id
   }
+  route_rules {
+    destination       = "::/0"
+    destination_type  = "CIDR_BLOCK"
+    network_entity_id = oci_core_internet_gateway.this.id
+  }
 }
 
 resource "oci_core_security_list" "this" {
@@ -37,10 +44,24 @@ resource "oci_core_security_list" "this" {
     protocol    = "all"
     stateless   = false
   }
+  egress_security_rules {
+    destination = "::/0"
+    protocol    = "all"
+    stateless   = false
+  }
 
   ingress_security_rules {
     protocol  = "17" # UDP
     source    = "0.0.0.0/0"
+    stateless = false
+    udp_options {
+      min = 51820
+      max = 51820
+    }
+  }
+  ingress_security_rules {
+    protocol  = "17" # UDP
+    source    = "::/0"
     stateless = false
     udp_options {
       min = 51820
@@ -52,6 +73,30 @@ resource "oci_core_security_list" "this" {
     protocol  = "1" # ICMP
     source    = "0.0.0.0/0"
     stateless = false
+  }
+  ingress_security_rules {
+    protocol  = "58" # ICMPv6
+    source    = "::/0"
+    stateless = false
+  }
+
+  ingress_security_rules {
+    protocol  = "6" # TCP (Talos maintenance mode API)
+    source    = "0.0.0.0/0"
+    stateless = false
+    tcp_options {
+      min = 50000
+      max = 50000
+    }
+  }
+  ingress_security_rules {
+    protocol  = "6" # TCP (Talos maintenance mode API)
+    source    = "::/0"
+    stateless = false
+    tcp_options {
+      min = 50000
+      max = 50000
+    }
   }
 
 }
@@ -67,4 +112,5 @@ resource "oci_core_subnet" "this" {
 
   prohibit_internet_ingress  = false
   prohibit_public_ip_on_vnic = false
+  ipv6cidr_block             = "2603:c026:307:1000::/64"
 }
