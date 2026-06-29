@@ -81,7 +81,13 @@ spec:
     alertmanager:
       enabled: true
       spec:
-        securityContext: null
+        securityContext:
+          runAsUser: 65534
+          runAsGroup: 65534
+          fsGroup: 65534
+          runAsNonRoot: true
+          seccompProfile:
+            type: RuntimeDefault
         retention: 120h
         useStrictSecurity: true
         resources:
