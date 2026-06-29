@@ -79,6 +79,7 @@ spec:
       enabled: false
 
     alertmanager:
+      enabled: true
       spec:
         securityContext: {}
         retention: 120h
