@@ -25,7 +25,7 @@ spec:
           - target:
               kind: VMAlertmanager
               name: vm-victoria-metrics-k8s-stack
-            patch:
+            patch: |-
               - op: remove
                 path: /spec/securityContext
   values:
