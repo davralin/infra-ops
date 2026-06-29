@@ -19,6 +19,15 @@ spec:
   upgrade:
     remediation:
       retries: 3
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              kind: VMAlertmanager
+              name: vm-victoria-metrics-k8s-stack
+            patch:
+              - op: remove
+                path: /spec/securityContext
   values:
     victoria-metrics-operator:
       operator:
@@ -81,13 +90,7 @@ spec:
     alertmanager:
       enabled: true
       spec:
-        securityContext:
-          runAsUser: 65534
-          runAsGroup: 65534
-          fsGroup: 65534
-          runAsNonRoot: true
-          seccompProfile:
-            type: RuntimeDefault
+        securityContext: null
         retention: 120h
         useStrictSecurity: true
         resources:
