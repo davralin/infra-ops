@@ -19,15 +19,6 @@ spec:
   upgrade:
     remediation:
       retries: 3
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              kind: VMAlertmanager
-              name: vm-victoria-metrics-k8s-stack
-            patch: |-
-              - op: remove
-                path: /spec/securityContext
   values:
     victoria-metrics-operator:
       operator:
@@ -99,15 +90,6 @@ spec:
             memory: 64Mi
           limits:
             memory: 256Mi
-        storage:
-          volumeClaimTemplate:
-            spec:
-              accessModes:
-                - ReadWriteOnce
-              resources:
-                requests:
-                  storage: 1Gi
-              storageClassName: ${STORAGE_READWRITEONCE}
 
     grafana:
       enabled: false
