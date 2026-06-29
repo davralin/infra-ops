@@ -75,9 +75,11 @@ spec:
           limits:
             memory: 256Mi
 
+    syncJob:
+      enabled: false
+
     alertmanager:
       spec:
-        securityContext: null
         retention: 120h
         useStrictSecurity: true
         resources:
