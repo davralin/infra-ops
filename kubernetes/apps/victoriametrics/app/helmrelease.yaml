@@ -19,15 +19,6 @@ spec:
   upgrade:
     remediation:
       retries: 3
-  postRenderers:
-  - kustomize:
-      patches:
-        - target:
-            kind: VMAlertmanager
-            name: vm-victoria-metrics-k8s-stack
-          patch: |
-            - op: remove
-              path: /spec/securityContext
   values:
     victoria-metrics-operator:
       operator:
