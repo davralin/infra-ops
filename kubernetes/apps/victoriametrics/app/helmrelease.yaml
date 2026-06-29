@@ -91,7 +91,7 @@ spec:
       enabled: true
       spec:
         securityContext: null
-        retention: 120h
+        retention: 121h
         useStrictSecurity: true
         resources:
           requests:
