@@ -81,7 +81,6 @@ spec:
     alertmanager:
       enabled: true
       spec:
-        securityContext: null
         retention: 120h
         useStrictSecurity: true
         resources:
