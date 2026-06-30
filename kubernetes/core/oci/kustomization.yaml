@@ -12,4 +12,6 @@ resources:
   - ../node-exporter/ks.yaml
   - ../openebs/ks.yaml
   - ../prometheus-operator-crds/ks.yaml
+  - ../cloudnative-pg/operator-ks.yaml
+  - ../cloudnative-pg/plugin-ks.yaml
   - ../volsync/ks.yaml

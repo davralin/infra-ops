@@ -1,0 +1,48 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: cloudnative-pg-backup-rules
+  namespace: cloudnative-pg
+  labels:
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+    - name: cloudnative-pg-backup.rules
+      rules:
+        - alert: LastFailedArchiveTime
+          annotations:
+            description: Archiving failed for {{ $labels.pod }}.
+            summary: Checks the last time archiving failed. Will be -1 when it
+              has not failed.
+          expr: delta(cnpg_pg_stat_archiver_last_failed_time[5m]) > 0
+          for: 1m
+          labels:
+            severity: warning
+        - alert: BarmanCloudBackupStale
+          annotations:
+            description: >-
+              No successful backup for {{ $labels.pod }} in over 36h (last
+              success {{ $value | humanizeDuration }} ago).
+            summary: Barman Cloud has not produced a successful backup recently.
+          expr: >-
+            time() -
+            barman_cloud_cloudnative_pg_io_last_available_backup_timestamp
+            > 36 * 3600
+          for: 15m
+          labels:
+            severity: warning
+        - alert: BarmanCloudBackupFailed
+          annotations:
+            description: >-
+              A Barman Cloud backup failed for {{ $labels.pod }} within the
+              last hour.
+            summary: Recent Barman Cloud backup failure.
+          expr: >-
+            time() -
+            barman_cloud_cloudnative_pg_io_last_failed_backup_timestamp
+            < 3600
+          for: 5m
+          labels:
+            severity: warning
