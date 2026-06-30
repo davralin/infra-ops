@@ -25,6 +25,10 @@ spec:
     fullnameOverride: *name
     manageCRDs: true
     replicaCount: 1
+    resources:
+      requests:
+        cpu: 25m
+        memory: 64Mi
     metrics:
       disableAuth: true
     podSecurityContext:

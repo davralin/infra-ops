@@ -32,12 +32,24 @@ spec:
         - '[*/*,kube-public,*]'
         - '[*/*,kube-node-lease,*]'
     admissionController:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 128Mi
       serviceMonitor:
         enabled: true
     backgroundController:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
       serviceMonitor:
         enabled: true
     cleanupController:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
       rbac:
         clusterRole:
           extraResources:
@@ -53,6 +65,10 @@ spec:
       serviceMonitor:
         enabled: true
     reportsController:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
       serviceMonitor:
         enabled: true
     webhooksCleanup:

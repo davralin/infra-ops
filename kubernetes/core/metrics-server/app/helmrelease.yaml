@@ -24,6 +24,10 @@ spec:
     fullnameOverride: metrics-server
     args:
       - --kubelet-insecure-tls
+    resources:
+      requests:
+        cpu: 25m
+        memory: 200Mi
     metrics:
       enabled: true
     serviceMonitor:

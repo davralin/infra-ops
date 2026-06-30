@@ -79,9 +79,14 @@ spec:
       runAsNonRoot: true
       seccompProfile:
         type: RuntimeDefault
+    initContainers:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 32Mi
     resources:
       requests:
-        cpu: 50m
+        cpu: 10m
         memory: 1Gi
       limits:
         memory: 2Gi
