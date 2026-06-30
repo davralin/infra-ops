@@ -11,6 +11,8 @@ spec:
     name: victoria-metrics-k8s-stack
     namespace: flux-system
   targetNamespace: victoriametrics
+  driftDetection:
+    mode: enabled
   interval: 10m
   timeout: 15m
   install:
