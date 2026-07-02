@@ -143,6 +143,15 @@ spec:
                     rules:
                       dns:
                         - matchPattern: "*"
+      db-egress:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            egress:
               - toEndpoints:
                   - matchLabels:
                       cnpg.io/cluster: pocket-id-postgres
