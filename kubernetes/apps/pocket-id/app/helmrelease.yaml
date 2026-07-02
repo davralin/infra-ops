@@ -140,9 +140,9 @@ spec:
                         protocol: UDP
                       - port: "53"
                         protocol: TCP
-                  rules:
-                    dns:
-                      - matchPattern: "*"
+                    rules:
+                      dns:
+                        - matchPattern: "*"
               - toEndpoints:
                   - matchLabels:
                       cnpg.io/cluster: pocket-id-postgres
