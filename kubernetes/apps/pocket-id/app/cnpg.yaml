@@ -1,28 +1,4 @@
 ---
-apiVersion: barmancloud.cnpg.io/v1
-kind: ObjectStore
-metadata:
-  name: pocket-id-postgres
-  namespace: pocket-id
-spec:
-  retentionPolicy: 7d
-  configuration:
-    destinationPath: s3://${SECRET_S3_VOLSYNC_BUCKET}/postgresql-${CLUSTER_NAME}
-    endpointURL: https://${SECRET_S3_VOLSYNC_HOST}
-    s3Credentials:
-      accessKeyId:
-        name: pocket-id-postgres
-        key: s3-access-key
-      secretAccessKey:
-        name: pocket-id-postgres
-        key: s3-secret-key
-      region:
-        name: pocket-id-postgres
-        key: region
-    wal:
-      compression: bzip2
-      maxParallel: 4
----
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
@@ -50,26 +26,32 @@ spec:
       memory: 256Mi
     limits:
       memory: 512Mi
-  plugins:
-    - name: barman-cloud.cloudnative-pg.io
-      isWALArchiver: true
-      parameters:
-        barmanObjectName: pocket-id-postgres
----
-apiVersion: postgresql.cnpg.io/v1
-kind: ScheduledBackup
-metadata:
-  name: pocket-id-postgres
-  namespace: pocket-id
-spec:
-  schedule: "0 37 01 * * *"
-  immediate: true
-  backupOwnerReference: self
-  method: plugin
-  pluginConfiguration:
-    name: barman-cloud.cloudnative-pg.io
-  cluster:
-    name: pocket-id-postgres
+  env:
+    - name: AWS_USE_CHUNKED_ENCODING
+      value: "false"
+  backup:
+    barmanObjectStore:
+      destinationPath: s3://${SECRET_S3_VOLSYNC_BUCKET}/postgresql-${CLUSTER_NAME}
+      endpointURL: https://${SECRET_S3_VOLSYNC_HOST}
+      serverName: pocket-id-postgres
+      s3Credentials:
+        accessKeyId:
+          name: pocket-id-postgres
+          key: s3-access-key
+        secretAccessKey:
+          name: pocket-id-postgres
+          key: s3-secret-key
+        region:
+          name: pocket-id-postgres
+          key: region
+      wal:
+        compression: bzip2
+        maxParallel: 4
+      retentionPolicy: 7d
+    scheduledBackup:
+      schedule: "0 37 01 * * *"
+      immediate: true
+      backupOwnerReference: self
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
