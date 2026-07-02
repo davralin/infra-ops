@@ -113,8 +113,8 @@ spec:
           rules:
             dns:
               - matchPattern: "*"
-    - toFQDNs:
-        - matchName: "${SECRET_S3_VOLSYNC_HOST}"
+    - toEntities:
+        - world
       toPorts:
         - ports:
             - port: "443"
