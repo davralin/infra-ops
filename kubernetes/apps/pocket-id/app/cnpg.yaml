@@ -1,0 +1,119 @@
+---
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: pocket-id-postgres
+  namespace: pocket-id
+spec:
+  retentionPolicy: 7d
+  configuration:
+    destinationPath: s3://${SECRET_S3_VOLSYNC_BUCKET}/postgresql-${CLUSTER_NAME}
+    endpointURL: https://${SECRET_S3_VOLSYNC_HOST}
+    s3Credentials:
+      accessKeyId:
+        name: pocket-id-postgres
+        key: s3-access-key
+      secretAccessKey:
+        name: pocket-id-postgres
+        key: s3-secret-key
+      region:
+        name: pocket-id-postgres
+        key: region
+    wal:
+      compression: bzip2
+      maxParallel: 4
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pocket-id-postgres
+  namespace: pocket-id
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:18.4
+  primaryUpdateStrategy: unsupervised
+  storage:
+    size: 2Gi
+    storageClass: "${STORAGE_READWRITEONCE}"
+  walStorage:
+    size: 1Gi
+    storageClass: "${STORAGE_READWRITEONCE}"
+  bootstrap:
+    initdb:
+      database: pocketid
+      owner: pocketid
+  monitoring:
+    enablePodMonitor: true
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: pocket-id-postgres
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: pocket-id-postgres
+  namespace: pocket-id
+spec:
+  schedule: "0 37 01 * * *"
+  immediate: true
+  backupOwnerReference: self
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+  cluster:
+    name: pocket-id-postgres
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: pocket-id-postgres
+  namespace: pocket-id
+spec:
+  endpointSelector:
+    matchLabels:
+      cnpg.io/cluster: pocket-id-postgres
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app.kubernetes.io/controller: pocket-id
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: cloudnative-pg
+      toPorts:
+        - ports:
+            - port: "5432"
+              protocol: TCP
+            - port: "8000"
+              protocol: TCP
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kube-system
+            k8s-app: kube-dns
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: UDP
+            - port: "53"
+              protocol: TCP
+          rules:
+            dns:
+              - matchPattern: "*"
+    - toFQDNs:
+        - matchName: "${SECRET_S3_VOLSYNC_HOST}"
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP

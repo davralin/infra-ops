@@ -9,5 +9,6 @@ resources:
   - ../forgejo-runner
   - ../healthchecks
   - ../kuma
+  - ../pocket-id
   - ../tuppr
   - ../victoriametrics

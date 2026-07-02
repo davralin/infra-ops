@@ -1,0 +1,152 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &name pocket-id
+  namespace: flux-system
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: *name
+    namespace: flux-system
+  driftDetection:
+    mode: enabled
+  targetNamespace: *name
+  install:
+    createNamespace: false
+    remediation:
+      retries: 10
+  upgrade:
+    remediation:
+      retries: 10
+  values:
+    fullnameOverride: *name
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+    controllers:
+      pocket-id:
+        containers:
+          pocket-id:
+            image:
+              repository: ghcr.io/pocket-id/pocket-id
+              tag: v2.9.0@sha256:db1ff4e328c96900f249b7a45970f537e8549f632d7a0556d2f6a0fc932551f9
+            env:
+              ENCRYPTION_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: pocket-id-secret
+                    key: ENCRYPTION_KEY
+              DB_CONNECTION_STRING:
+                valueFrom:
+                  secretKeyRef:
+                    name: pocket-id-postgres-app
+                    key: uri
+              SELF_URL: "https://id.${SECRET_DEFAULT_DOMAIN}"
+              PORT: "8081"
+              FILE_BACKEND: "database"
+              ENABLE_EMAIL_VERIFICATION: "false"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - /app/pocket-id
+                      - healthcheck
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - /app/pocket-id
+                      - healthcheck
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 50m
+                memory: 128Mi
+              limits:
+                memory: 256Mi
+    service:
+      pocket-id:
+        controller: *name
+        ports:
+          http:
+            port: 8081
+    persistence:
+      data:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /app/data
+      tmp:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+    rawResources:
+      network-policy:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            ingress:
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: cloudflared
+                      app.kubernetes.io/controller: cloudflared
+                toPorts:
+                  - ports:
+                      - port: "8081"
+                        protocol: TCP
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: kube-system
+                      k8s-app: kube-dns
+                toPorts:
+                  - ports:
+                      - port: "53"
+                        protocol: UDP
+                      - port: "53"
+                        protocol: TCP
+                  rules:
+                    dns:
+                      - matchPattern: "*"
+              - toEndpoints:
+                  - matchLabels:
+                      cnpg.io/cluster: pocket-id-postgres
+                toPorts:
+                  - ports:
+                      - port: "5432"
+                        protocol: TCP
