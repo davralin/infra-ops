@@ -30,6 +30,7 @@ spec:
     - name: AWS_USE_CHUNKED_ENCODING
       value: "false"
   backup:
+    retentionPolicy: 7d
     barmanObjectStore:
       destinationPath: s3://${SECRET_S3_VOLSYNC_BUCKET}/postgresql-${CLUSTER_NAME}
       endpointURL: https://${SECRET_S3_VOLSYNC_HOST}
@@ -47,11 +48,18 @@ spec:
       wal:
         compression: bzip2
         maxParallel: 4
-      retentionPolicy: 7d
-    scheduledBackup:
-      schedule: "0 37 01 * * *"
-      immediate: true
-      backupOwnerReference: self
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: pocket-id-postgres
+  namespace: pocket-id
+spec:
+  schedule: "0 37 01 * * *"
+  immediate: true
+  backupOwnerReference: self
+  cluster:
+    name: pocket-id-postgres
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
