@@ -58,6 +58,7 @@ spec:
     - toEndpoints:
         - matchLabels:
             cnpg.io/podRole: instance
+            io.kubernetes.pod.namespace: pocket-id
       toPorts:
         - ports:
             - port: "8000"
