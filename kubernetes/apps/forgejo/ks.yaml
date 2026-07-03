@@ -27,5 +27,6 @@ spec:
         optional: true
   dependsOn:
     - name: cilium
+    - name: cloudnative-pg
     - name: prometheus-operator-crds
     - name: volsync

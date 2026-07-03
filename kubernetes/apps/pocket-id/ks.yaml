@@ -26,7 +26,5 @@ spec:
         optional: true
   dependsOn:
     - name: cilium
-    - name: cloudflared
-    - name: openebs
     - name: cloudnative-pg
     - name: prometheus-operator-crds
