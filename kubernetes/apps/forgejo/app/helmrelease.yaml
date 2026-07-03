@@ -49,8 +49,15 @@ spec:
           LANDING_PAGE: explore
           DOMAIN: &host "git.${SECRET_DEFAULT_DOMAIN}"
           ROOT_URL: "https://git.${SECRET_DEFAULT_DOMAIN}/"
+        oauth2_client:
+          ENABLE_AUTO_REGISTRATION: true
+          OPENID_CONNECT_SCOPES: "email profile"
+          USERNAME: nickname
+          ACCOUNT_LINKING: login
         service:
-          DISABLE_REGISTRATION: true
+          DISABLE_REGISTRATION: false
+          ALLOW_ONLY_EXTERNAL_REGISTRATION: true
+          SHOW_REGISTRATION_BUTTON: false
           DEFAULT_ORG_VISIBILITY: limited
           DEFAULT_USER_VISIBILITY: limited
         repository:

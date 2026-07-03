@@ -53,6 +53,7 @@ spec:
                     name: pocket-id-postgres-app
                     key: uri
               APP_URL: "https://id.${SECRET_DEFAULT_DOMAIN}"
+              INTERNAL_APP_URL: "http://pocket-id.pocket-id.svc.cluster.local:8081"
               TRUST_PROXY: "true"
               TRUSTED_PLATFORM: "CF-Connecting-IP"
               UI_CONFIG_DISABLED: "true"
@@ -129,6 +130,14 @@ spec:
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: cloudflared
                       app.kubernetes.io/controller: cloudflared
+                toPorts:
+                  - ports:
+                      - port: "8081"
+                        protocol: TCP
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: forgejo
+                      app.kubernetes.io/name: forgejo
                 toPorts:
                   - ports:
                       - port: "8081"
