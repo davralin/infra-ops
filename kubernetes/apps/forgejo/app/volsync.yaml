@@ -19,7 +19,7 @@ metadata:
 spec:
   sourcePVC: forgejo
   trigger:
-    schedule: "34 * * * *"
+    schedule: "0 2 * * *"
   restic:
     copyMethod: Direct
     pruneIntervalDays: 1

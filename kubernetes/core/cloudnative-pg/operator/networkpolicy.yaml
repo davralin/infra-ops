@@ -65,6 +65,14 @@ spec:
               protocol: TCP
     - toEndpoints:
         - matchLabels:
+            cnpg.io/podRole: instance
+            io.kubernetes.pod.namespace: forgejo
+      toPorts:
+        - ports:
+            - port: "8000"
+              protocol: TCP
+    - toEndpoints:
+        - matchLabels:
             app.kubernetes.io/name: plugin-barman-cloud
       toPorts:
         - ports:

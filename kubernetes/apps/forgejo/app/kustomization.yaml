@@ -10,6 +10,8 @@ resources:
   - ./secret.sops.yaml
   - ./helmrelease.yaml
   - ./helmrelease-valkey.yaml
+  - ./cnpg.yaml
+  - ./cnpg-secret.yaml
   - ./networkpolicy.yaml
   - ./probes.yaml
   - ./volsync.yaml

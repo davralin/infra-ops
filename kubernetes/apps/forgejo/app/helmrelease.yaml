@@ -31,6 +31,12 @@ spec:
       admin:
         existingSecret: forgejo-config
         passwordMode: initialOnlyNoReset
+      additionalConfigFromEnvs:
+        - name: FORGEJO__DATABASE__PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: forgejo-postgres-app
+              key: password
       config:
         APP_NAME: "Forgejo"
         cache:
@@ -38,7 +44,11 @@ spec:
           ADAPTER: redis
           HOST: redis://forgejo-valkey.forgejo.svc.cluster.local:6379
         database:
-          DB_TYPE: sqlite3
+          DB_TYPE: postgres
+          HOST: forgejo-postgres-rw.forgejo.svc.cluster.local:5432
+          NAME: forgejo
+          USER: forgejo
+          SSL_MODE: disable
         i18n:
           LANGS: en-US
           NAMES: English
