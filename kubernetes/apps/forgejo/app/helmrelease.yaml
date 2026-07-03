@@ -54,6 +54,7 @@ spec:
           OPENID_CONNECT_SCOPES: "email profile"
           USERNAME: nickname
           ACCOUNT_LINKING: login
+          UPDATE_AVATAR: true
         service:
           DISABLE_REGISTRATION: false
           ALLOW_ONLY_EXTERNAL_REGISTRATION: true
