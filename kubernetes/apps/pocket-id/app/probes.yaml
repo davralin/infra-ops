@@ -1,0 +1,14 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: pocket-id
+  namespace: pocket-id
+spec:
+  module: http_2xx
+  prober:
+    url: blackbox-exporter.blackbox-exporter.svc.cluster.local:9115
+  targets:
+    staticConfig:
+      static:
+        - "https://id.${SECRET_DEFAULT_DOMAIN}/.well-known/openid-configuration"

@@ -185,3 +185,20 @@ spec:
                   - ports:
                       - port: "3000"
                         protocol: TCP
+      pocket-id-egress:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: pocket-id
+                      app.kubernetes.io/controller: pocket-id
+                toPorts:
+                  - ports:
+                      - port: "8081"
+                        protocol: TCP
