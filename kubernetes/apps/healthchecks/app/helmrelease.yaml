@@ -107,11 +107,6 @@ spec:
         ports:
           http:
             port: *port
-    serviceMonitor:
-      healthchecks:
-        serviceName: *name
-        endpoints:
-          - port: http
     persistence:
       data:
         existingClaim: healthchecks

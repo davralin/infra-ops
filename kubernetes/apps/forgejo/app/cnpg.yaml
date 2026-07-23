@@ -95,7 +95,7 @@ spec:
             k8s:app.kubernetes.io/name: prometheus
       toPorts:
         - ports:
-            - port: "8000"
+            - port: "9187"
               protocol: TCP
   egress:
     - toEntities:
