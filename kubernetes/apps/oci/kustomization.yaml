@@ -10,5 +10,5 @@ resources:
   - ../healthchecks
   - ../kuma
   - ../pocket-id
+  - ../prometheus
   - ../tuppr
-  - ../victoriametrics

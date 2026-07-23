@@ -8,6 +8,15 @@ spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: prometheus-blackbox-exporter
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: prometheus
+            app.kubernetes.io/name: prometheus
+      toPorts:
+        - ports:
+            - port: "9115"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:

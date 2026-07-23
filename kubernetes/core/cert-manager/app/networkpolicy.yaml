@@ -22,9 +22,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:app.kubernetes.io/name: vmagent
-            k8s:io.kubernetes.pod.namespace: victoriametrics
-            k8s:managed-by: vm-operator
+            k8s:app.kubernetes.io/name: prometheus
+            k8s:io.kubernetes.pod.namespace: prometheus
       toPorts:
         - ports:
             - port: "9402"
@@ -74,9 +73,8 @@ spec:
   ingress:
     - fromEndpoints:
         - matchLabels:
-            k8s:app.kubernetes.io/name: vmagent
-            k8s:io.kubernetes.pod.namespace: victoriametrics
-            k8s:managed-by: vm-operator
+            k8s:app.kubernetes.io/name: prometheus
+            k8s:io.kubernetes.pod.namespace: prometheus
       toPorts:
         - ports:
             - port: "9402"
@@ -113,9 +111,8 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            k8s:app.kubernetes.io/name: vmagent
-            k8s:io.kubernetes.pod.namespace: victoriametrics
-            k8s:managed-by: vm-operator
+            k8s:app.kubernetes.io/name: prometheus
+            k8s:io.kubernetes.pod.namespace: prometheus
       toPorts:
         - ports:
             - port: "9402"

@@ -16,7 +16,7 @@ spec:
         - remote-node
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: monitoring
+            k8s:io.kubernetes.pod.namespace: prometheus
             app.kubernetes.io/name: prometheus
       toPorts:
         - ports:

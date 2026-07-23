@@ -2,21 +2,23 @@
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: vmagent-scrape-egress
-  namespace: victoriametrics
+  name: prometheus
+  namespace: prometheus
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: vmagent
+      app.kubernetes.io/name: prometheus
   egress:
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
+            k8s:io.kubernetes.pod.namespace: kube-system
             k8s-app: kube-dns
       toPorts:
         - ports:
             - port: "53"
               protocol: UDP
+            - port: "53"
+              protocol: TCP
           rules:
             dns:
               - matchPattern: "*"
@@ -24,7 +26,18 @@ spec:
         - kube-apiserver
       toPorts:
         - ports:
+            - port: "443"
+              protocol: TCP
             - port: "6443"
+              protocol: TCP
+    - toEntities:
+        - host
+        - remote-node
+      toPorts:
+        - ports:
+            - port: "9100"
+              protocol: TCP
+            - port: "10250"
               protocol: TCP
     - toEndpoints:
         - {}
@@ -58,104 +71,36 @@ spec:
               protocol: TCP
             - port: "10259"
               protocol: TCP
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: victoriametrics
-            app.kubernetes.io/name: vmsingle
-      toPorts:
-        - ports:
-            - port: "8428"
-              protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: vmsingle-ingress
-  namespace: victoriametrics
+  name: alertmanager
+  namespace: prometheus
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: vmsingle
+      app.kubernetes.io/name: alertmanager
   ingress:
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: victoriametrics
-            app.kubernetes.io/name: vmagent
-      toPorts:
-        - ports:
-            - port: "8428"
-              protocol: TCP
-    - fromEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: victoriametrics
-            app.kubernetes.io/name: vmalert
-      toPorts:
-        - ports:
-            - port: "8428"
-              protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: vmalert-egress
-  namespace: victoriametrics
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: vmalert
-  egress:
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-            k8s-app: kube-dns
-      toPorts:
-        - ports:
-            - port: "53"
-              protocol: UDP
-          rules:
-            dns:
-              - matchPattern: "*"
-    - toEntities:
-        - kube-apiserver
-      toPorts:
-        - ports:
-            - port: "6443"
-              protocol: TCP
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: victoriametrics
-            app.kubernetes.io/name: vmsingle
-      toPorts:
-        - ports:
-            - port: "8429"
-              protocol: TCP
-    - toEndpoints:
-        - matchLabels:
-            io.kubernetes.pod.namespace: victoriametrics
-            app.kubernetes.io/name: vmalertmanager
+            k8s:io.kubernetes.pod.namespace: prometheus
+            app.kubernetes.io/name: prometheus
       toPorts:
         - ports:
             - port: "9093"
               protocol: TCP
----
-apiVersion: cilium.io/v2
-kind: CiliumNetworkPolicy
-metadata:
-  name: vmalertmanager-egress
-  namespace: victoriametrics
-spec:
-  endpointSelector:
-    matchLabels:
-      app.kubernetes.io/name: vmalertmanager
   egress:
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
+            k8s:io.kubernetes.pod.namespace: kube-system
             k8s-app: kube-dns
       toPorts:
         - ports:
             - port: "53"
               protocol: UDP
+            - port: "53"
+              protocol: TCP
           rules:
             dns:
               - matchPattern: "*"
@@ -163,27 +108,38 @@ spec:
         - kube-apiserver
       toPorts:
         - ports:
+            - port: "443"
+              protocol: TCP
             - port: "6443"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: vm-operator-egress
-  namespace: victoriametrics
+  name: prometheus-operator
+  namespace: prometheus
 spec:
   endpointSelector:
     matchLabels:
-      app.kubernetes.io/name: victoria-metrics-operator
+      app.kubernetes.io/name: kube-prometheus-stack-prometheus-operator
+  ingress:
+    - fromEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "10250"
+              protocol: TCP
   egress:
     - toEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
+            k8s:io.kubernetes.pod.namespace: kube-system
             k8s-app: kube-dns
       toPorts:
         - ports:
             - port: "53"
               protocol: UDP
+            - port: "53"
+              protocol: TCP
           rules:
             dns:
               - matchPattern: "*"
@@ -191,30 +147,30 @@ spec:
         - kube-apiserver
       toPorts:
         - ports:
+            - port: "443"
+              protocol: TCP
             - port: "6443"
               protocol: TCP
 ---
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
-  name: kube-state-metrics-egress
-  namespace: victoriametrics
+  name: kube-state-metrics
+  namespace: prometheus
 spec:
   endpointSelector:
     matchLabels:
       app.kubernetes.io/name: kube-state-metrics
-  egress:
-    - toEndpoints:
+  ingress:
+    - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: kube-system
-            k8s-app: kube-dns
+            k8s:io.kubernetes.pod.namespace: prometheus
+            app.kubernetes.io/name: prometheus
       toPorts:
         - ports:
-            - port: "53"
-              protocol: UDP
-          rules:
-            dns:
-              - matchPattern: "*"
+            - port: "8080"
+              protocol: TCP
+  egress:
     - toEntities:
         - kube-apiserver
       toPorts:
