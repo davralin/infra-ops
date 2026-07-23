@@ -44,7 +44,9 @@ spec:
             - port: "10259"
               protocol: TCP
     - toEndpoints:
-        - {}
+        - matchExpressions:
+            - key: k8s:io.kubernetes.pod.namespace
+              operator: Exists
       toPorts:
         - ports:
             - port: "3000"
