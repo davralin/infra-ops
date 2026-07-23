@@ -69,36 +69,6 @@ resource "oci_core_security_list" "this" {
     }
   }
 
-  ingress_security_rules {
-    protocol  = "1" # ICMP
-    source    = "0.0.0.0/0"
-    stateless = false
-  }
-  ingress_security_rules {
-    protocol  = "58" # ICMPv6
-    source    = "::/0"
-    stateless = false
-  }
-
-  ingress_security_rules {
-    protocol  = "6" # TCP (Talos maintenance mode API)
-    source    = "0.0.0.0/0"
-    stateless = false
-    tcp_options {
-      min = 50000
-      max = 50000
-    }
-  }
-  ingress_security_rules {
-    protocol  = "6" # TCP (Talos maintenance mode API)
-    source    = "::/0"
-    stateless = false
-    tcp_options {
-      min = 50000
-      max = 50000
-    }
-  }
-
 }
 
 resource "oci_core_subnet" "this" {
