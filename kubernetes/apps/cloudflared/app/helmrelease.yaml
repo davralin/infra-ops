@@ -89,6 +89,23 @@ spec:
         endpoints:
           - port: http
     rawResources:
+      monitoring-ingress:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            ingress:
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: prometheus
+                      k8s:app.kubernetes.io/name: prometheus
+                toPorts:
+                  - ports:
+                      - port: "8080"
+                        protocol: TCP
       dns-egress:
         manifest:
           apiVersion: cilium.io/v2

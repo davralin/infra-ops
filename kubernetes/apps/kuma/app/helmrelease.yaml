@@ -89,6 +89,14 @@ spec:
                   - ports:
                       - port: "3001"
                         protocol: TCP
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: prometheus
+                      k8s:app.kubernetes.io/name: prometheus
+                toPorts:
+                  - ports:
+                      - port: "3001"
+                        protocol: TCP
             egress:
               - toEndpoints:
                   - matchLabels:

@@ -29,8 +29,8 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: prometheus
-            app.kubernetes.io/name: prometheus
+            k8s:io.kubernetes.pod.namespace: prometheus
+            k8s:app.kubernetes.io/name: prometheus
       toPorts:
         - ports:
             - port: "8080"
@@ -99,8 +99,8 @@ spec:
               protocol: TCP
     - fromEndpoints:
         - matchLabels:
-            io.kubernetes.pod.namespace: prometheus
-            app.kubernetes.io/name: prometheus
+            k8s:io.kubernetes.pod.namespace: prometheus
+            k8s:app.kubernetes.io/name: prometheus
       toPorts:
         - ports:
             - port: "9090"
