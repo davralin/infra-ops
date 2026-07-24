@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
+    "config:recommended",
     ":dependencyDashboard",
     ":semanticCommits",
     ":separatePatchReleases"
@@ -13,6 +13,12 @@
   "commitMessageTopic": "{{depName}}",
   "commitMessageExtra": "to {{newVersion}}",
   "commitMessageSuffix": "",
+  "flux": {
+    "managerFilePatterns": ["/^kubernetes/.+\\.ya?ml$/"]
+  },
+  "kubernetes": {
+    "managerFilePatterns": ["/^kubernetes/.+\\.ya?ml$/"]
+  },
   "packageRules": [
     {
       "description": "Auto-merge trusted digests and patches",
@@ -22,11 +28,15 @@
   ],
   "customManagers": [
     {
-      "description": "Talos version in tofu variables",
+      "description": "Annotated versions in tofu and Kubernetes manifests",
       "customType": "regex",
-      "fileMatch": ["tofu/.*\\.tf$", "tofu/.*\\.tfvars$"],
+      "managerFilePatterns": [
+        "/^tofu/.+\\.tf$/",
+        "/^tofu/.+\\.tfvars$/",
+        "/^kubernetes/.+\\.ya?ml$/"
+      ],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>[a-z-]+) depName=(?<depName>[^\\s]+)\\s+(?:default\\s*=\\s*|[a-z_]+\\s*=\\s*)\"(?<currentValue>[^\"]+)\""
+        "# renovate: datasource=(?<datasource>[a-z-]+)(?: registryUrl=(?<registryUrl>[^\\s]+))? depName=(?<depName>[^\\s]+)\\s+(?:default\\s*=\\s*|[a-z_]+\\s*=\\s*|[A-Za-z_]+:\\s*)\"?(?<currentValue>[^\"\\s]+)\"?"
       ],
       "datasourceTemplate": "{{datasource}}"
     }
