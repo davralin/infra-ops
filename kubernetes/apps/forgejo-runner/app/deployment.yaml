@@ -82,7 +82,7 @@ spec:
             limits:
               memory: 256Mi
         - name: dind
-          image: docker:29.3.1-dind
+          image: docker:29.6.2-dind
           securityContext:
             privileged: true
           env:
