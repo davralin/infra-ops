@@ -29,6 +29,13 @@
       "automergeType": "branch"
     },
     {
+      "description": "Auto-merge Prometheus Community minor updates",
+      "matchUpdateTypes": ["minor"],
+      "matchPackageNames": ["/^ghcr\\.io/prometheus-community/"],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
       "matchDatasources": ["docker"],
       "matchUpdateTypes": ["major"],
       "commitMessagePrefix": "feat(container)!: ",
