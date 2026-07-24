@@ -18,7 +18,7 @@ spec:
     spec:
       initContainers:
         - name: merge-config
-          image: code.forgejo.org/forgejo/runner:12.7.3
+          image: code.forgejo.org/forgejo/runner:12.13.2
           command:
             - sh
             - -c
@@ -57,7 +57,7 @@ spec:
               mountPath: /etc/runner
       containers:
         - name: runner
-          image: code.forgejo.org/forgejo/runner:12.7.3
+          image: code.forgejo.org/forgejo/runner:12.13.2
           command:
             - sh
             - -c
