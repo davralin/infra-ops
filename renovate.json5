@@ -29,9 +29,11 @@
       "automergeType": "branch"
     },
     {
-      "description": "Auto-merge Prometheus Community minor updates",
+      "description": "Auto-merge allowlisted minor updates",
       "matchUpdateTypes": ["minor"],
-      "matchPackageNames": ["/^ghcr\\.io/prometheus-community/"],
+      "matchPackageNames": [
+        "/^ghcr\\.io/prometheus-community/"
+      ],
       "automerge": true,
       "automergeType": "branch"
     },
