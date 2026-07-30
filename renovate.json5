@@ -9,6 +9,7 @@
   ],
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Renovate Dashboard",
+  "assigneesFromCodeOwners": true,
   "ignoreTests": true,
   "suppressNotifications": ["prIgnoreNotification"],
   "rebaseWhen": "conflicted",
