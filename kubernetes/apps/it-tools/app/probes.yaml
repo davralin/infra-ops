@@ -1,0 +1,14 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: Probe
+metadata:
+  name: it-tools
+  namespace: it-tools
+spec:
+  module: http_2xx
+  prober:
+    url: blackbox-exporter.blackbox-exporter.svc.cluster.local:9115
+  targets:
+    staticConfig:
+      static:
+        - "https://tools.${SECRET_DEFAULT_DOMAIN}"

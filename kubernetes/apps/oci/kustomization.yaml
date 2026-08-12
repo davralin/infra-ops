@@ -5,10 +5,14 @@ kind: Kustomization
 resources:
   - ../blackbox-exporter
   - ../cloudflared
+  - ../cyberchef
   - ../forgejo
   - ../forgejo-runner
   - ../healthchecks
+  - ../it-tools
   - ../kuma
+  - ../librespeed
   - ../pocket-id
   - ../prometheus
   - ../tuppr
+  - ../wastebin

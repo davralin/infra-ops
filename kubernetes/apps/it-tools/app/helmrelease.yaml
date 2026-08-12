@@ -1,0 +1,104 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &name it-tools
+  namespace: flux-system
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: it-tools
+    namespace: flux-system
+  driftDetection:
+    mode: enabled
+  targetNamespace: it-tools
+  install:
+    createNamespace: false
+    remediation:
+      retries: 10
+  upgrade:
+    remediation:
+      retries: 10
+  values:
+    fullnameOverride: *name
+    global:
+      createDefaultServiceAccount: false
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+    controllers:
+      it-tools:
+        strategy: RollingUpdate
+        containers:
+          it-tools:
+            image:
+              repository: ghcr.io/home-operations/it-tools
+              tag: 2024.10.22@sha256:7f26ae8d7a4a58b8d70b685cba5cbaa54d7df876d9f8bae702207f45b06d9b7c
+            env:
+              TZ: "${TIMEZONE}"
+            probes:
+              liveness: &probes
+                enabled: true
+              readiness: *probes
+              startup: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: true
+            resources:
+              requests:
+                cpu: 10m
+                memory: 20Mi
+              limits:
+                memory: 60Mi
+    service:
+      it-tools:
+        controller: *name
+        ports:
+          http:
+            port: &port 8080
+    persistence:
+      tmp:
+        type: emptyDir
+        advancedMounts:
+          it-tools:
+            it-tools:
+              - path: /tmp
+    rawResources:
+      network-policy:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            ingress:
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: cloudflared
+                      app.kubernetes.io/controller: cloudflared
+                toPorts:
+                  - ports:
+                      - port: "8080"
+                        protocol: TCP
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: prometheus
+                      k8s:app.kubernetes.io/name: prometheus
+                toPorts:
+                  - ports:
+                      - port: "8080"
+                        protocol: TCP

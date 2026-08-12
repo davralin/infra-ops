@@ -1,0 +1,101 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &name librespeed
+  namespace: flux-system
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: librespeed
+    namespace: flux-system
+  driftDetection:
+    mode: enabled
+  targetNamespace: librespeed
+  install:
+    createNamespace: false
+    remediation:
+      retries: 10
+  upgrade:
+    remediation:
+      retries: 10
+  values:
+    fullnameOverride: *name
+    global:
+      createDefaultServiceAccount: false
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      securityContext:
+        # https://github.com/librespeed/speedtest/issues/663
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: false
+        seccompProfile:
+          type: RuntimeDefault
+    controllers:
+      librespeed:
+        strategy: RollingUpdate
+        containers:
+          librespeed:
+            image:
+              repository: ghcr.io/librespeed/speedtest
+              tag: 6.2.0@sha256:199ddbb3543f7f988e99c9c3a7c4d31c1683d2adbba9597557ca4770082368ae
+            env:
+              MODE: standalone
+            probes:
+              liveness: &probes
+                enabled: true
+              readiness: *probes
+              startup: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              # cp: cannot create regular file '/var/www/html/speedtest.js': Read-only file system
+              readOnlyRootFilesystem: false
+              capabilities:
+                add:
+                  - CHOWN
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 10m
+                memory: 50Mi
+              limits:
+                memory: 100Mi
+    service:
+      librespeed:
+        controller: *name
+        ports:
+          http:
+            port: &port 8080
+    rawResources:
+      network-policy:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            ingress:
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: cloudflared
+                      app.kubernetes.io/controller: cloudflared
+                toPorts:
+                  - ports:
+                      - port: "8080"
+                        protocol: TCP
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: prometheus
+                      k8s:app.kubernetes.io/name: prometheus
+                toPorts:
+                  - ports:
+                      - port: "8080"
+                        protocol: TCP
