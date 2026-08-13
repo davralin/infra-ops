@@ -168,6 +168,74 @@ spec:
                   - ports:
                       - port: "8000"
                         protocol: TCP
+      cyberchef-egress:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: cyberchef
+                      app.kubernetes.io/controller: cyberchef
+                toPorts:
+                  - ports:
+                      - port: "8000"
+                        protocol: TCP
+      it-tools-egress:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: it-tools
+                      app.kubernetes.io/controller: it-tools
+                toPorts:
+                  - ports:
+                      - port: "8080"
+                        protocol: TCP
+      librespeed-egress:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: librespeed
+                      app.kubernetes.io/controller: librespeed
+                toPorts:
+                  - ports:
+                      - port: "8080"
+                        protocol: TCP
+      wastebin-egress:
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/controller: *name
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: wastebin
+                      app.kubernetes.io/controller: wastebin
+                toPorts:
+                  - ports:
+                      - port: "8088"
+                        protocol: TCP
       kuma-egress:
         manifest:
           apiVersion: cilium.io/v2
