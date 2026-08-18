@@ -1,6 +1,6 @@
 locals {
   # renovate: datasource=helm registryUrl=https://helm.cilium.io depName=cilium
-  cilium_version = "1.20.0"
+  cilium_version = "1.20.1"
 }
 
 resource "helm_release" "cilium" {
