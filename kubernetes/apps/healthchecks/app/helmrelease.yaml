@@ -40,7 +40,7 @@ spec:
           healthchecks:
             image:
               repository: docker.io/healthchecks/healthchecks
-              tag: v4.3@sha256:cd7bcd94350818b3944f82eb5995f48bdeab8c8627977578a569ffa73f56f56f
+              tag: v4.4@sha256:aa08a61b0dcfd83f1332eab195d5cec1b595ae076eb8388cadf8a3d597114f9b
             env:
               ALLOWED_HOSTS: "health.${SECRET_DEFAULT_DOMAIN}"
               SITE_ROOT: "https://health.${SECRET_DEFAULT_DOMAIN}"
