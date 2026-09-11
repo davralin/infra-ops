@@ -1,6 +1,6 @@
 locals {
   # renovate: datasource=docker depName=ghcr.io/controlplaneio-fluxcd/charts/flux-operator
-  flux_operator_version = "0.59.0"
+  flux_operator_version = "0.60.0"
 }
 
 resource "helm_release" "flux_operator" {
