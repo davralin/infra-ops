@@ -46,7 +46,7 @@ variable "cluster_name" {
 variable "talos_version" {
   type = string
   # renovate: datasource=github-releases depName=siderolabs/talos
-  default = "v1.14.0"
+  default = "v1.14.1"
 }
 
 variable "kubernetes_version" {
