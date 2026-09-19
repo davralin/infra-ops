@@ -19,10 +19,10 @@ metadata:
 spec:
   sourcePVC: healthchecks
   trigger:
-    schedule: "14 * * * *"
+    schedule: "14 4 * * *"
   restic:
     copyMethod: Direct
-    pruneIntervalDays: 1
+    pruneIntervalDays: 14
     repository: healthchecks-volsync-secret
     moverSecurityContext:
       runAsUser: 999
@@ -33,7 +33,6 @@ spec:
       seccompProfile:
         type: RuntimeDefault
     retain:
-      hourly: 24
       daily: 7
       weekly: 1
 ---
