@@ -6,7 +6,7 @@ terraform {
     }
     talos = {
       source  = "siderolabs/talos"
-      version = "~> 0.11"
+      version = "~> 0.12"
     }
   }
   required_version = ">= 1.8"
