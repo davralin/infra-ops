@@ -52,7 +52,7 @@ variable "talos_version" {
 variable "kubernetes_version" {
   type = string
   # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
-  default = "v1.37.0"
+  default = "v1.37.1"
 }
 
 variable "instance_shape" {
