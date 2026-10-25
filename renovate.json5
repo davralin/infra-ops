@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    ":automergeBranch",
     ":dependencyDashboard",
     ":semanticCommits",
     ":separatePatchReleases"
@@ -10,9 +9,9 @@
   "dependencyDashboard": true,
   "dependencyDashboardTitle": "Renovate Dashboard",
   "assigneesFromCodeOwners": true,
-  "ignoreTests": true,
   "suppressNotifications": ["prIgnoreNotification"],
   "rebaseWhen": "conflicted",
+  "automergeStrategy": "rebase",
   "commitMessageTopic": "{{depName}}",
   "commitMessageExtra": "to {{newVersion}}",
   "commitMessageSuffix": "",
@@ -24,19 +23,15 @@
   },
   "packageRules": [
     {
-      "description": "Auto-merge patch and digest updates",
-      "matchUpdateTypes": ["digest", "patch"],
+      "description": "Auto-merge non-breaking updates",
+      "matchUpdateTypes": ["digest", "pinDigest", "patch", "minor"],
       "automerge": true,
-      "automergeType": "branch"
+      "automergeType": "pr"
     },
     {
-      "description": "Auto-merge allowlisted minor updates",
-      "matchUpdateTypes": ["minor"],
-      "matchPackageNames": [
-        "/^ghcr\\.io/prometheus-community/"
-      ],
-      "automerge": true,
-      "automergeType": "branch"
+      "description": "Major updates require review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
     },
     {
       "matchDatasources": ["docker"],
