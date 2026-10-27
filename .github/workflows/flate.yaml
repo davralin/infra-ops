@@ -1,0 +1,71 @@
+---
+name: Flate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - kubernetes/**
+
+jobs:
+  flate-test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install flate
+        uses: home-operations/flate/action@main
+        with:
+          cache: true
+
+      - name: Test
+        env:
+          FLATE_BASE: ""
+        run: flate test all --path ./kubernetes/clusters/oci --allow-missing-secrets --concurrency 1
+
+  flate-diff:
+    name: Diff
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Install flate
+        uses: home-operations/flate/action@main
+        with:
+          cache: true
+
+      - name: Diff
+        id: diff
+        run: |
+          diff=$(flate diff all \
+            --path ./kubernetes/clusters/oci \
+            --allow-missing-secrets \
+            -o github) || true
+          echo "result<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$diff" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Post diff comment
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            <!-- flate-diff -->
+            <details>
+            <summary>Rendered manifest diff</summary>
+
+            ```diff
+            ${{ steps.diff.outputs.result }}
+            ```
+
+            </details>
+          comment-author: github-actions[bot]
+          body-includes: <!-- flate-diff -->
