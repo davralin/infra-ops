@@ -29,12 +29,9 @@ spec:
       automountServiceAccountToken: false
       enableServiceLinks: false
       securityContext:
-        # https://github.com/librespeed/speedtest/issues/663
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
-        fsGroupChangePolicy: OnRootMismatch
-        runAsNonRoot: false
+        runAsUser: 10001
+        runAsGroup: 10001
+        runAsNonRoot: true
         seccompProfile:
           type: RuntimeDefault
     controllers:
@@ -43,8 +40,8 @@ spec:
         containers:
           librespeed:
             image:
-              repository: ghcr.io/librespeed/speedtest
-              tag: 6.3.1@sha256:bc34bf69b6c102b23ab81b6e77beb7cce321fb0d3be33ec6e80edef3e9dd8bab
+              repository: ghcr.io/davralin/librespeed
+              tag: 6.3.1@sha256:51b13e3adb277cd76eb390d2c288caeb36bbe5f91570827e04f51d40521271f5
             env:
               MODE: standalone
             probes:
@@ -54,13 +51,8 @@ spec:
               startup: *probes
             securityContext:
               allowPrivilegeEscalation: false
-              # cp: cannot create regular file '/var/www/html/speedtest.js': Read-only file system
-              readOnlyRootFilesystem: false
+              readOnlyRootFilesystem: true
               capabilities:
-                add:
-                  - CHOWN
-                  - SETGID
-                  - SETUID
                 drop:
                   - ALL
             resources:
@@ -69,6 +61,12 @@ spec:
                 memory: 50Mi
               limits:
                 memory: 100Mi
+    persistence:
+      tmp:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
     service:
       librespeed:
         controller: *name
