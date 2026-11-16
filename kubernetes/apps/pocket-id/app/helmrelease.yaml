@@ -40,7 +40,7 @@ spec:
           pocket-id:
             image:
               repository: ghcr.io/pocket-id/pocket-id
-              tag: v2.19.2@sha256:6650e8292d0e014c9005969ca399628c263d5ac1be53a7660e181c4d332dbc8a
+              tag: v2.19.3@sha256:1b5b2c9579af31e0186635fa9aebafc99687bfa23a328ac5785690691bf6ac39
             env:
               ENCRYPTION_KEY:
                 valueFrom:
