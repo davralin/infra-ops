@@ -10,6 +10,11 @@ creation_rules:
   - path_regex: 'kubernetes/core/oci/.*'
     age: *oci_age
 
+  # Keep Kubernetes resource identity readable to renderers that cannot decrypt SOPS files.
+  - path_regex: 'kubernetes/apps/.*\.sops\.yaml$'
+    age: *oci_age
+    unencrypted_regex: '^(apiVersion|kind|metadata|type)$'
+
   - path_regex: 'kubernetes/apps/.*'
     age: *oci_age
 
