@@ -195,3 +195,26 @@ spec:
               protocol: TCP
             - port: "6443"
               protocol: TCP
+---
+# The chart's pre-upgrade legacy-policy check runs as a standalone Job, outside
+# the controller selectors above. It needs Kubernetes API access to list CRDs
+# and legacy policy resources.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: legacy-policy-check
+  namespace: kyverno
+spec:
+  endpointSelector:
+    matchLabels:
+      k8s:io.kubernetes.pod.namespace: kyverno
+      k8s:job-name: kyverno-check-legacy-policies
+  egress:
+    - toEntities:
+        - kube-apiserver
+      toPorts:
+        - ports:
+            - port: "443"
+              protocol: TCP
+            - port: "6443"
+              protocol: TCP
