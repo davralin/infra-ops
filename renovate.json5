@@ -1,143 +1,213 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    ":dependencyDashboard",
-    ":semanticCommits",
-    ":separatePatchReleases"
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+    ':dependencyDashboard',
+    ':semanticCommits',
+    ':separatePatchReleases',
   ],
-  "dependencyDashboard": true,
-  "dependencyDashboardTitle": "Renovate Dashboard",
-  "assigneesFromCodeOwners": true,
-  "suppressNotifications": ["prIgnoreNotification"],
-  "rebaseWhen": "conflicted",
-  "automergeStrategy": "rebase",
-  "commitMessageTopic": "{{depName}}",
-  "commitMessageExtra": "to {{newVersion}}",
-  "commitMessageSuffix": "",
-  "flux": {
-    "managerFilePatterns": ["/^kubernetes/.+\\.ya?ml$/"]
+  dependencyDashboard: {
+    enabled: true,
+    title: 'Renovate Dashboard',
   },
-  "kubernetes": {
-    "managerFilePatterns": ["/^kubernetes/.+\\.ya?ml$/"]
-  },
-  "packageRules": [
-    {
-      "description": "Auto-merge non-breaking updates",
-      "matchUpdateTypes": ["digest", "pinDigest", "patch", "minor"],
-      "automerge": true,
-      "automergeType": "pr"
-    },
-    {
-      "description": "Major updates require review",
-      "matchUpdateTypes": ["major"],
-      "automerge": false
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["major"],
-      "commitMessagePrefix": "feat(container)!: ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": " ( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["minor"],
-      "commitMessagePrefix": "feat(container): ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": " ( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["patch"],
-      "commitMessagePrefix": "fix(container): ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": " ( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["digest"],
-      "commitMessagePrefix": "chore(container): ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentDigestShort}} -> {{newDigestShort}} )"
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchUpdateTypes": ["major"],
-      "commitMessagePrefix": "feat(helm)!: ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchUpdateTypes": ["minor"],
-      "commitMessagePrefix": "feat(helm): ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["helm"],
-      "matchUpdateTypes": ["patch"],
-      "commitMessagePrefix": "fix(helm): ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["github-releases", "github-tags"],
-      "matchUpdateTypes": ["major"],
-      "commitMessagePrefix": "feat(release)!: ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["github-releases", "github-tags"],
-      "matchUpdateTypes": ["minor"],
-      "commitMessagePrefix": "feat(release): ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["github-releases", "github-tags"],
-      "matchUpdateTypes": ["patch"],
-      "commitMessagePrefix": "fix(release): ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["terraform-provider"],
-      "matchUpdateTypes": ["major"],
-      "commitMessagePrefix": "feat(terraform)!: ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["terraform-provider"],
-      "matchUpdateTypes": ["minor"],
-      "commitMessagePrefix": "feat(terraform): ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentVersion}} -> {{newVersion}} )"
-    },
-    {
-      "matchDatasources": ["terraform-provider"],
-      "matchUpdateTypes": ["patch"],
-      "commitMessagePrefix": "fix(terraform): ",
-      "commitMessageTopic": "{{depName}}",
-      "commitMessageExtra": "( {{currentVersion}} -> {{newVersion}} )"
-    }
+  assigneesFromCodeOwners: true,
+  suppressNotifications: [
+    'prIgnoreNotification',
   ],
-  "customManagers": [
+  rebaseWhen: 'conflicted',
+  automergeStrategy: 'rebase',
+  commitMessageTopic: '{{depName}}',
+  commitMessageExtra: 'to {{newVersion}}',
+  commitMessageSuffix: '',
+  flux: {
+    managerFilePatterns: [
+      '/^kubernetes/.+\\.ya?ml$/',
+    ],
+  },
+  kubernetes: {
+    managerFilePatterns: [
+      '/^kubernetes/.+\\.ya?ml$/',
+    ],
+  },
+  packageRules: [
     {
-      "description": "Annotated versions in tofu and Kubernetes manifests",
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/^tofu/.+\\.tf$/",
-        "/^tofu/.+\\.tfvars$/",
-        "/^kubernetes/.+\\.ya?ml$/"
+      description: 'Auto-merge non-breaking updates',
+      matchUpdateTypes: [
+        'digest',
+        'pinDigest',
+        'patch',
+        'minor',
       ],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>[a-z-]+)(?: registryUrl=(?<registryUrl>[^\\s]+))? depName=(?<depName>[^\\s]+)\\s+(?:default\\s*=\\s*|[a-z_]+\\s*=\\s*|[A-Za-z_]+:\\s*)\"?(?<currentValue>[^\"\\s]+)\"?"
+      automerge: true,
+      automergeType: 'pr',
+    },
+    {
+      description: 'Major updates require review',
+      matchUpdateTypes: [
+        'major',
       ],
-      "datasourceTemplate": "{{datasource}}"
-    }
-  ]
+      automerge: false,
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      commitMessagePrefix: 'feat(container)!: ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: ' ( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'minor',
+      ],
+      commitMessagePrefix: 'feat(container): ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: ' ( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      commitMessagePrefix: 'fix(container): ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: ' ( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'digest',
+      ],
+      commitMessagePrefix: 'chore(container): ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentDigestShort}} -> {{newDigestShort}} )',
+    },
+    {
+      matchDatasources: [
+        'helm',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      commitMessagePrefix: 'feat(helm)!: ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'helm',
+      ],
+      matchUpdateTypes: [
+        'minor',
+      ],
+      commitMessagePrefix: 'feat(helm): ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'helm',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      commitMessagePrefix: 'fix(helm): ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'github-releases',
+        'github-tags',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      commitMessagePrefix: 'feat(release)!: ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'github-releases',
+        'github-tags',
+      ],
+      matchUpdateTypes: [
+        'minor',
+      ],
+      commitMessagePrefix: 'feat(release): ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'github-releases',
+        'github-tags',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      commitMessagePrefix: 'fix(release): ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'terraform-provider',
+      ],
+      matchUpdateTypes: [
+        'major',
+      ],
+      commitMessagePrefix: 'feat(terraform)!: ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'terraform-provider',
+      ],
+      matchUpdateTypes: [
+        'minor',
+      ],
+      commitMessagePrefix: 'feat(terraform): ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentVersion}} -> {{newVersion}} )',
+    },
+    {
+      matchDatasources: [
+        'terraform-provider',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      commitMessagePrefix: 'fix(terraform): ',
+      commitMessageTopic: '{{depName}}',
+      commitMessageExtra: '( {{currentVersion}} -> {{newVersion}} )',
+    },
+  ],
+  customManagers: [
+    {
+      description: 'Annotated versions in tofu and Kubernetes manifests',
+      customType: 'regex',
+      managerFilePatterns: [
+        '/^tofu/.+\\.tf$/',
+        '/^tofu/.+\\.tfvars$/',
+        '/^kubernetes/.+\\.ya?ml$/',
+      ],
+      matchStrings: [
+        '# renovate: datasource=(?<datasource>[a-z-]+)(?: registryUrl=(?<registryUrl>[^\\s]+))? depName=(?<depName>[^\\s]+)\\s+(?:default\\s*=\\s*|[a-z_]+\\s*=\\s*|[A-Za-z_]+:\\s*)"?(?<currentValue>[^"\\s]+)"?',
+      ],
+      datasourceTemplate: '{{datasource}}',
+    },
+  ],
 }
