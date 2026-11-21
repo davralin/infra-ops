@@ -1,35 +1,56 @@
 ---
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: deny-workloads-in-reserved-namespaces
 spec:
-  validationFailureAction: Enforce
-  background: false
-  rules:
-    - name: deny-workloads-in-reserved-namespaces
-      match:
-        any:
-          - resources:
-              namespaces:
-                - default
-                - kube-public
-                - kube-node-lease
-              kinds:
-                - Pod
-                - Service
-                - ReplicationController
-                - Deployment
-                - ReplicaSet
-                - StatefulSet
-                - DaemonSet
-                - Job
-                - CronJob
-              operations:
-                - CREATE
-                - UPDATE
-      validate:
-        message: >-
-          Creating or updating workload resources in this namespace is not allowed.
-          Use an explicit application namespace.
-        deny: {}
+  evaluation:
+    admission:
+      enabled: true
+    background:
+      enabled: false
+  # Namespace is immutable; CREATE-only also preserves legacy behavior for
+  # resources that already exist in a reserved namespace.
+  matchConstraints:
+    resourceRules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+        resources:
+          - pods
+          - services
+          - replicationcontrollers
+        scope: Namespaced
+      - apiGroups:
+          - apps
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+        resources:
+          - deployments
+          - replicasets
+          - statefulsets
+          - daemonsets
+        scope: Namespaced
+      - apiGroups:
+          - batch
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+        resources:
+          - jobs
+          - cronjobs
+        scope: Namespaced
+  validationActions:
+    - Deny
+  validations:
+    - expression: >-
+        object.metadata.namespace != 'default' &&
+        object.metadata.namespace != 'kube-public' &&
+        object.metadata.namespace != 'kube-node-lease'
+      message: Creating workload resources in this namespace is not allowed. Use an explicit application namespace.

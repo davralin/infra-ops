@@ -1,30 +1,40 @@
 ---
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: GeneratingPolicy
 metadata:
   name: generate-default-deny-networkpolicy
 spec:
-  rules:
-    - name: generate-default-deny
-      match:
-        any:
-          - resources:
-              kinds:
-                - Namespace
-      exclude:
-        any:
-          - resources:
-              namespaces:
-                - kube-system
-                - kyverno
-      generate:
-        generateExisting: true
-        apiVersion: networking.k8s.io/v1
-        kind: NetworkPolicy
-        name: default-deny
-        namespace: "{{request.object.metadata.name}}"
-        synchronize: true
-        data:
+  evaluation:
+    generateExisting:
+      enabled: true
+    synchronize:
+      enabled: true
+  matchConstraints:
+    resourceRules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - namespaces
+        scope: Cluster
+  matchConditions:
+    - name: exclude-system-namespaces
+      expression: >-
+        object.metadata.name != 'kube-system' &&
+        object.metadata.name != 'kyverno'
+  generate:
+    - template:
+        interpolate: cel
+        value: |
+          apiVersion: networking.k8s.io/v1
+          kind: NetworkPolicy
+          metadata:
+            name: default-deny
+            namespace: (( object.metadata.name ))
           spec:
             podSelector: {}
             policyTypes:
